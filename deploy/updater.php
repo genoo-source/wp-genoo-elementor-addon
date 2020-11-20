@@ -65,7 +65,7 @@ function wpme_genno_elementor_updater_init($file){
   add_filter('plugins_api', function($result, $action, $args) use ($file, $version){
 		if( ! empty( $args->slug ) ) { // If there is a slug
 			if( $args->slug == current( explode( '/' , $GLOBALS['wpme_aff_basename']))) { // And it's our slug
-        $version = $version === null ? wpme_get_github_version() : $version;
+        $version = $version === null ? wpme_genno_elementor_get_github_version() : $version;
         // Set it to an array
 				$plugin = array(
 					'name'				=> $GLOBALS['wpme_aff_plugin']["Name"],
