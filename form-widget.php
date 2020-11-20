@@ -147,7 +147,7 @@ protected function _register_controls()
 		[
 			'label' => __('Form success message', 'Genoo Elementor Extension' ),
 			'type' => \Elementor\Controls_Manager::TEXTAREA,
-			'rows' => 10,
+			'rows' => 6,
 			'default' => __('', 'Genoo Elementor Extension' ),
 			'placeholder' => __('Type your description here', 'Genoo Elementor Extension' ),
 		]);
@@ -157,7 +157,7 @@ protected function _register_controls()
 		[
 			'label' => __('Form error message', 'Genoo Elementor Extension'),
 			'type' => \Elementor\Controls_Manager::TEXTAREA,
-			'rows' => 10,
+			'rows' => 6,
 			'default' => __('', 'Genoo Elementor Extension' ),
 			'placeholder' => __('Type your description here', 'Genoo Elementor Extension'),
 		]);

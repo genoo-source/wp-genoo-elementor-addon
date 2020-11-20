@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: Genoo Elementor Extension
- * Description: Custom Elementor extension.
- * Version:     1.0.0
+ * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
+ * Version:     1.3.8
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -21,6 +21,53 @@ if (!defined('ABSPATH'))
  * @since 1.0.0
  */
 use \Elementor\Plugin;
+
+require_once(plugin_dir_path( __FILE__ ).'deploy/updater.php' );
+wpme_genno_elementor_updater_init(__FILE__);
+
+register_activation_hook(__FILE__, function () {
+    // Basic extension data
+    global $wpdb;
+    $fileFolder = basename(dirname(__FILE__));
+    $file = basename(__FILE__);
+    $filePlugin = $fileFolder . DIRECTORY_SEPARATOR . $file;
+    // Activate?
+    $activate = FALSE;
+    $isGenoo = FALSE;
+    // Get api / repo
+    if (class_exists('\WPME\ApiFactory') && class_exists('\WPME\RepositorySettingsFactory')) {
+        $activate = TRUE;
+        $repo = new \WPME\RepositorySettingsFactory();
+        $api = new \WPME\ApiFactory($repo);
+        if (class_exists('\Genoo\Api')) {
+            $isGenoo = TRUE;
+        }
+    } elseif (class_exists('\Genoo\Api') && class_exists('\Genoo\RepositorySettings')) {
+        $activate = TRUE;
+        $repo = new \Genoo\RepositorySettings();
+        $api = new \Genoo\Api($repo);
+        $isGenoo = TRUE;
+    } elseif (class_exists('\WPMKTENGINE\Api') && class_exists('\WPMKTENGINE\RepositorySettings')) {
+        $activate = TRUE;
+        $repo = new \WPMKTENGINE\RepositorySettings();
+        $api = new \WPMKTENGINE\Api($repo);
+    }
+    // 1. First protectoin, no WPME or Genoo plugin
+        if ($activate == FALSE && $isGenoo == FALSE) { ?>
+  
+<div class="alert">
+<p style="font-family:Segoe UI;font-size:14px;">This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate</p>
+</div>
+    <?php die;
+ 
+ genoo_wpme_deactivate_plugin($filePlugin, 'This extension requires WPMktgEngine or Genoo plugin to work with.');
+    } else {
+        // Make ACTIVATE calls if any?
+        
+    }
+
+});
+
 
 add_action('admin_menu', 'Genoo_elementor');
 function Genoo_elementor()
