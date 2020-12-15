@@ -16,4 +16,3 @@ https://github.com/genoo-source/wp-genoo-elementor-addon/archive/master.zip
 
 
 
-`<?php code(); // goes in backticks ?>`
