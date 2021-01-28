@@ -182,24 +182,33 @@ protected function render()
     $cta_list = $this->get_settings('CTA');
     $Align = $this->get_settings('Align');
     $cta_checkbox = $this->get_settings( 'Cta_checkbox' );
+    $ctaappearanceinterval = $this->get_settings('CTAappearanceinterval');
         
-    if ( 'yes' === $settings['show_title']) 
+    if ( 'yes' === $settings['show_title'] && $ctaappearanceinterval != '') 
     {
         $hastime="true";
-        $ctaappearanceinterval = $this->get_settings('CTAappearanceinterval');
+        
     } 
     else
     {
         $hastime="false";  
     }
-        
+       
     if($this->get_settings('CTA') != '')
-    {    
+    {  
+        if(hastime=="true" && $ctaappearanceinterval != ''){
     $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$Align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
+        }
+        else
+        {
+        $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$Align.'" hastime="'.$hastime.'"]';    
+        }
     }
     $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
+  
 	?>
 	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
+
 <?php
 }
 
