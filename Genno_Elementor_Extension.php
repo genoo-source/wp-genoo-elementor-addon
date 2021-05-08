@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.9
+ * Version:     1.3.10
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -91,8 +91,150 @@ function add_elementor_widget_categories()
     ));
 
 }
-
+//elementor categories registered for form,survey
 add_action('elementor/elements/categories_registered', 'add_elementor_widget_categories');
+
+//form integration
+add_action( 'elementor_pro/init', function() {
+	// Here its safe to include our action class file
+include_once( 'Genoo_Action_After_Submit.php' );
+include_once('Elementor_Forms_Patterns_Validation.php' );
+
+	// Instantiate the action class
+$sendy_action = new Genoo_Action_After_Submit();
+
+// Register the action with form widget
+\ElementorPro\Plugin::instance()->modules_manager->get_modules( 'forms' )->add_form_action( $sendy_action->get_name(), $sendy_action );
+
+});
+
+// formsubmit for lead
+add_action( 'elementor_pro/forms/new_record', function( $record, $ajax_handler ) {
+    global $post,$WPME_API;
+  $form_name = $record->get_form_settings( 'form_name' );
+  $settings = $record->get( 'form_settings' );
+  $email_folder_id = $settings['SelectEmailfolder'];
+  $select_lead_id = $settings['SelectLeadType']; 
+  $select_email_id = $settings['SelectEmail']; 
+  $select_webinar = $settings['SelectWebinar']; 
+  $page_url = get_permalink( get_the_ID() );
+  
+  if(!empty($select_lead_id)):
+        $selectvalues = array();
+        $selectvalues['form_name'] = $form_name;
+        $selectvalues['lead_type_id'] = $select_lead_id;
+        $selectvalues['client_ip_address']  = $_SERVER['REMOTE_ADDR'];
+        $selectvalues['page_url'] =$page_url;
+        $selectvalues['form_type'] = 'EF';
+            if (!empty($select_email_id)):
+                $selectvalues['confirmation_email_id'] = $select_email_id;
+            endif;
+            if (!empty($select_webinar)):
+                $selectvalues['webinar_id'] = $select_webinar;
+            endif;
+            
+  foreach($settings as $seting)
+  {
+       foreach($seting as $value)
+       {
+           if(!empty($value['custom_id'])):
+            $custom_ids[] = $value;
+           endif;
+       }
+  }
+  $raw_fields = $record->get( 'fields' );
+     $fields = [];
+    foreach ($raw_fields as $id => $field ) {
+       
+        $fields[ $id ] = $field['value'];
+     
+    }
+    
+    foreach($custom_ids as $custom_values)
+   {
+       foreach($fields as $key => $val)
+       {
+        if($custom_values['custom_id']==$key) :
+        if($custom_values['third_party_input']!=''):
+            $firstindex = strstr($custom_values['third_party_input'], 'c00');
+            $lastindex = strstr($custom_values['third_party_input'], 'date');
+            if($firstindex == true && $lastindex == true):
+                        $date=date_create($val);
+                        $date = date_format($date,"Y-m-d");
+                        $selectvalues[$custom_values['third_party_input']] = $date."T".'00:00:00+00:00';
+                        update_post_meta($post->ID,$custom_values['third_party_input'],$date."T".'00:00:00+00:00'); 
+            elseif($firstindex == false && $lastindex == true):
+                        $date = date_create($val);
+                        $date = date_format($date,"m/d/Y");
+                        update_post_meta($post->ID,$custom_values['third_party_input'],$date); 
+                        $selectvalues[$custom_values['third_party_input']] = $date; 
+            elseif($custom_values['field_type']=='radio') :
+                        $selectvalues[$custom_values['third_party_input']] = '1';
+                        update_post_meta($post->ID,$custom_values['third_party_input'],'1'); 
+            elseif($custom_values['field_type']=='checkbox'):
+                        $selectvalues[$custom_values['third_party_input']] = '1';
+                        update_post_meta($post->ID,$custom_values['third_party_input'],'1'); 
+            else:
+                        update_post_meta($post->ID,$custom_values['third_party_input'],$val); 
+                        $selectvalues[$custom_values['third_party_input']] = $val;
+            endif;
+        else :
+            if($custom_values['custom_id']=='name') :
+               $namesplit  = explode(" ",  $val);
+                update_post_meta($post->ID,'first_name',$namesplit[0]); 
+                update_post_meta($post->ID,'last_name',$namesplit[1]); 
+                $selectvalues['first_name'] = $namesplit[0];
+                $selectvalues['last_name'] = $namesplit[1];
+            elseif($custom_values['custom_id']=='email') :
+                $custom_values['custom_id']='email';
+                update_post_meta($post->ID,'email',$val); 
+                $selectvalues['email'] = $val;
+            elseif($custom_values['custom_id'] =='message'):
+                update_post_meta($post->ID,'comments_txt',$val);
+                $selectvalues['comments_txt'] = $val; 
+            else :
+                $selectvalues[$custom_values['custom_id']] = $val;
+                update_post_meta($post->ID,$custom_values['custom_id'],$val); 
+                              
+            endif;
+                             
+            endif;
+        endif;
+            
+        }
+       
+       
+      
+   }
+   
+   if (method_exists($WPME_API, 'callCustom')):
+       
+       try {
+         $response = $WPME_API->callCustom('/leadformsubmit','POST',$selectvalues);
+         
+        if ($WPME_API->http->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
+                elseif ($WPME_API->http->getResponseCode() == 200):
+                    
+                endif;
+        }
+        catch(Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                    // Looks like leadfields not found
+                    
+                endif;
+            }
+        endif;
+           $geno = $response->genoo_id;
+         setcookie('_gtldef', $geno, time() + (10 * 365 * 24 * 60 * 60));
+               
+    
+
+endif;
+   // $ajax_handler->add_response_data( 'test_response',  $selectvalues);    
+     
+}, 10, 2);
+
+
 final class Genoo_Elementor_Extension
 {
 
@@ -170,6 +312,8 @@ final class Genoo_Elementor_Extension
 
         add_action('init', [$this, 'i18n']);
         add_action('plugins_loaded', [$this, 'init']);
+        add_action('elementor/editor/after_enqueue_scripts', array($this, 'adminEnqueueScripts'), 10);
+    
 
     }
 
@@ -187,7 +331,7 @@ final class Genoo_Elementor_Extension
     public function i18n()
     {
 
-        load_plugin_textdomain('genoo-elementor-extension');
+     load_plugin_textdomain('genoo-elementor-extension');
 
     }
 
@@ -243,7 +387,11 @@ final class Genoo_Elementor_Extension
         });
 
     }
-
+public function adminEnqueueScripts($hook)
+    {
+        // scripts
+     wp_enqueue_script( 'my_custom_script', plugin_dir_url( __FILE__ ) . 'file.js', array(), '1.0' );
+    }
     /**
      * Admin notice
      *
@@ -282,7 +430,7 @@ final class Genoo_Elementor_Extension
 
         $message = sprintf(
         /* translators: 1: Plugin name 2: Elementor 3: Required Elementor version */
-        esc_html__('"%1$s" requires "%2$s" version %3$s or greater.', 'genoo-elementor-extension') , '<strong>' . esc_html__('Genoo Elementor Extensionn', 'genoo-elementor-extension') . '</strong>', '<strong>' . esc_html__('Elementor', 'genoo-elementor-extension') . '</strong>', self::MINIMUM_ELEMENTOR_VERSION);
+        esc_html__('"%1$s" requires "%2$s" version %3$s or greater.', 'genoo-elementor-extension') , '<strong>' . esc_html__('Genoo Elementor Extension', 'genoo-elementor-extension') . '</strong>', '<strong>' . esc_html__('Elementor', 'genoo-elementor-extension') . '</strong>', self::MINIMUM_ELEMENTOR_VERSION);
 
         printf('<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>', $message);
 
@@ -345,6 +493,7 @@ final class Genoo_Elementor_Extension
     }
 
 }
+
 
 Genoo_Elementor_Extension::instance();
 
