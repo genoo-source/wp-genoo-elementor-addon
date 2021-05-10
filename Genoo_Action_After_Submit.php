@@ -297,7 +297,6 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 $leadtypes[0] = 'Select Lead Types';
                 $leadtypes[1] = '---------------------------------';
                 $leadtypes[2] = 'create lead type';
-                $leadtypes[3] = '------------------------------';
                 if ( $leadType->folder_id == $lead_id ):
                 $leadtypes[$leadType->id] = $leadType->name;
                 endif;
@@ -418,6 +417,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 $leadtypes[0] = 'Select Lead Types';
                 $leadtypes[1] = '------------------';
                 $leadtypes[2] = 'Create lead type';
+                $leadtypes[$leadType->id] = $leadType->name;
                 endforeach;
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
