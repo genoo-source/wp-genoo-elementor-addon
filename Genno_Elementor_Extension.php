@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.11
+ * Version:     1.3.12
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -218,7 +218,7 @@ add_action( 'elementor_pro/forms/new_record', function( $record, $ajax_handler )
             }
         endif;
            $genoo = $response->genoo_id;
-         setcookie('_gtldef', $genoo, time() + (10 * 365 * 24 * 60 * 60));
+         setcookie('_gtld', $genoo, time() + (10 * 365 * 24 * 60 * 60));
                
     
 
