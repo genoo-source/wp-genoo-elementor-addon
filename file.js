@@ -242,6 +242,14 @@ jQuery(document).on("ready", function () {
       } else {
         jQuery(".elementor-control-Createleadtype").css("display", "none");
       }
+	  if(jQuery(this).val() === "1")
+      {
+      jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);  
+      }
+      else
+      {
+     jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
+      }
     }
   );
 });
