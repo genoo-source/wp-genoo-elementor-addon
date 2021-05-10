@@ -27,7 +27,7 @@ jQuery(document).on("ready", function () {
             ).append('<option value="' + key + '">' + value + " </option>");
           });
 
-         // console.log(data);
+         
           var leadtype = jQuery(
             ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
           ).val();
@@ -165,7 +165,7 @@ jQuery(document).on("ready", function () {
             jQuery(
               ".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
             ).append(
-              '<option value="0" selected="selected">Select Email</option>'
+              '<option value="0" selected="selected">Select email</option>'
             );
 
              jQuery(".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").val(0).trigger("change");
@@ -221,7 +221,7 @@ jQuery(document).on("ready", function () {
             jQuery(
               ".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
             ).append('<option value="0">No Email Here</option>');
-            //  jQuery(".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field").hide();
+           
           }
         },
         error: function (errorThrown) {
@@ -237,10 +237,6 @@ jQuery(document).on("ready", function () {
     "change",
     ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
     function () {
-      lead_folder_id = jQuery(
-        ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
-      ).val();
-
       if (jQuery(this).val() === "2") {
         jQuery(".elementor-control-Createleadtype").css("display", "block");
       } else {
@@ -260,7 +256,7 @@ jQuery(document).on(
     var getvalue = jQuery(
       ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
     ).val();
-    alert(getvalue);
+    
     if (getvalue == "" || getvalue == 0 || getvalue == 2) {
       jQuery(".elementor-control-SelectLeadType").css(
         "border",

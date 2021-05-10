@@ -4,17 +4,17 @@ class Elementor_Forms_Patterns_Validation {
 
     public function __construct() {
 
-        add_action( 'elementor/element/form/section_form_fields/before_section_end', [ $this, 'add_css_class_field_control' ], 100, 2 );
+        add_action( 'elementor/element/form/section_form_fields/before_section_end', [ $this, 'add_class_field_control' ], 100, 2 );
     }
 
     /**
-    * add_css_class_field_control
+    * add_class_field_control
     * @param $element
     * @param $args
     * //add new field inside the advanced tab
     */
 
-    public function add_css_class_field_control( $element, $args ) {
+    public function add_class_field_control( $element, $args ) {
         global $post;
         $elementor = \Elementor\Plugin::instance();
         $control_data = $elementor->controls_manager->get_control_from_stack( $element->get_name(), 'form_fields' );
@@ -23,7 +23,7 @@ class Elementor_Forms_Patterns_Validation {
             return;
         }
         $map_fields = array_keys( $this->map_fields() );
-        // create a new css class control as a repeater field
+        // create a new class control as a repeater field
         $tmp = new Elementor\Repeater();
         $tmp->add_control(
             'third_party_input',
@@ -63,13 +63,13 @@ class Elementor_Forms_Patterns_Validation {
 
         $pattern_field = $tmp->get_controls();
 
-        $pattern_field1 = $pattern_field['third_party_input'];
+        $third_party_input = $pattern_field['third_party_input'];
 
         // insert new class field in advanced tab before field ID control
         $new_order = [];
-        foreach ( $control_data['fields'] as $field_key => $field ) {
+        foreach ($control_data['fields'] as $field_key => $field ) {
             if ( 'custom_id' === $field['name'] ) {
-                $new_order['third_party_input'] = $pattern_field1;
+                $new_order['third_party_input'] = $third_party_input;
 
             }
 

@@ -133,9 +133,9 @@ add_action( 'elementor_pro/forms/new_record', function( $record, $ajax_handler )
                 $selectvalues['webinar_id'] = $select_webinar;
             endif;
             
-  foreach($settings as $seting)
+  foreach($settings as $setting)
   {
-       foreach($seting as $value)
+       foreach($setting as $value)
        {
            if(!empty($value['custom_id'])):
             $custom_ids[] = $value;
@@ -212,26 +212,18 @@ add_action( 'elementor_pro/forms/new_record', function( $record, $ajax_handler )
        try {
          $response = $WPME_API->callCustom('/leadformsubmit','POST',$selectvalues);
          
-        if ($WPME_API->http->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
-                elseif ($WPME_API->http->getResponseCode() == 200):
-                    
-                endif;
-        }
+       }
         catch(Exception $e) {
-                if ($WPME_API->http->getResponseCode() == 404):
-                    // Looks like leadfields not found
-                    
-                endif;
+               
             }
         endif;
-           $geno = $response->genoo_id;
-         setcookie('_gtldef', $geno, time() + (10 * 365 * 24 * 60 * 60));
+           $genoo = $response->genoo_id;
+         setcookie('_gtldef', $genoo, time() + (10 * 365 * 24 * 60 * 60));
                
     
 
 endif;
-   // $ajax_handler->add_response_data( 'test_response',  $selectvalues);    
-     
+   
 }, 10, 2);
 
 

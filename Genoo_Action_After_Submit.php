@@ -2,7 +2,7 @@
 /**
 * Class Genoo_Action_After_Submit
 * @see https://developers.elementor.com/custom-form-action/
-* Custom elementor form action after submit to add a subsciber to
+* Custom elementor form action after submit to add a settings 
 * Genoo_Action_After_Submit list via API
 */
 use WPMKTENGINE\Wordpress\Utils;
@@ -26,7 +26,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
     public function __construct()
     {
-        //get email data while select email olders
+        //get email data while select email folders
         add_action( 'wp_ajax_emaildata', array( $this, 'emaildata' ) );
         add_action( 'elementor/action_after_submit/before_save', $this, $data );
         //save leadtype when user selects create leadtype
@@ -98,7 +98,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 		}
         
         // Make sure that there is a SelectWebinar field ID
-		if ( empty( $seetings['SelectWebinar'] ) ) {
+		if ( empty( $settings['SelectWebinar'] ) ) {
 		    
 		    	return;
 		    
@@ -371,7 +371,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
             if ( !empty( $elementor_data ) ):
             $decode_datas = json_decode( $elementor_data );
-
+            
             foreach ( $decode_datas as $decode_data )
             {
                 $data = $decode_data->elements;
