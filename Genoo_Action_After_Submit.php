@@ -184,7 +184,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 'label_block' => true,
                 'required' => true,
                 'separator' => 'before',
-                'class' => 'required',
+              
                 'conditions' => [
                     'relation' => 'and',
                     'terms' => [
@@ -217,7 +217,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         $widget->add_control(
             'SelectLeadType',
             [
-                'label' => __( 'Select LeadType (where leads will be put who submit this form):', 'Genoo Elementor Extension' ),
+                'label' => __('Select LeadType (where leads will be put who submit this form):', 'Genoo Elementor Extension' ),
                 'type' => \Elementor\Controls_Manager::SELECT,
                 'options' =>  $this->getleadtypes(),
                 'default' =>  $getleadtypes[0],
@@ -395,6 +395,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                             $leadtypes[2] = 'Create lead type';
                             if ( $leadType->folder_id == $dataleadtypefolder ):
                             $leadtypes[$leadType->id] = $leadType->name;
+                            else:
+                             $leadtypes[$leadType->id] = $leadType->name;   
                             endif;
                             endforeach;
                         } catch( Exception $e ) {
@@ -462,7 +464,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         //getting emails if email id already present in database
         public function datasuccess()
         {
-            global $post;
+            global $post,$WPME_API;
 
             $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
 
@@ -481,9 +483,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
                         $datavalue = $elements_value->settings->SelectEmailfolder;
                         $dataemail = $elements_value->settings->SelectEmail;
-
-                        global $WPME_API;
-                        //calling leadfields api for showing dropdown
+                       //calling leadfields api for showing dropdown
                         if ( method_exists( $WPME_API, 'callCustom' ) ):
                         try {
                             if ( $datavalue != 0 ):

@@ -165,7 +165,7 @@ jQuery(document).on("ready", function () {
             jQuery(
               ".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
             ).append(
-              '<option value="0" selected="selected">Select email</option>'
+              '<option value="0">Select email</option>'
             );
 
              jQuery(".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").val(0).trigger("change");
@@ -198,7 +198,7 @@ jQuery(document).on("ready", function () {
               return false;
             } else {
               jQuery(
-                ".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
+                ".elementor-control-SelectEmail"
               ).removeAttr("style");
               jQuery("#elementor-panel-saver-button-publish").attr(
                 "disabled",
@@ -242,7 +242,7 @@ jQuery(document).on("ready", function () {
       } else {
         jQuery(".elementor-control-Createleadtype").css("display", "none");
       }
-	  if(jQuery(this).val() === "1")
+	  if(jQuery(this).val() === "1" || jQuery(this).val() === "0")
       {
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);  
       }
@@ -307,9 +307,14 @@ jQuery(document).on(
   ".elementor-control-SelectEmail  > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
   function () {
     var selectemail = jQuery(this).val();
-    if (selectemail != "" || selectemail != 0) {
+    if (selectemail == "" || selectemail == 0) {
+      jQuery(".elementor-control-SelectEmail").css("border", "2px solid red");
+      jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);
+       }
+    else{
       jQuery(".elementor-control-SelectEmail").removeAttr("style");
-      jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
+      jQuery("#elementor-panel-saver-button-publish").attr("disabled", false); 
+     
     }
   }
 );
