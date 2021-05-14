@@ -445,12 +445,17 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
 
                 if ( $id != 0 ):
-                $email_data = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
+                $customfields = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
                 else:
-                $email_data = $WPME_API->getEmails();
-
+                $customfields = $WPME_API->getEmails();
                 endif;
-                wp_send_json( $email_data );
+
+                  foreach ($customfields as $customfield ):
+                       $email_values[$customfield->id] = $customfield->name;
+                  endforeach;
+                          
+                wp_send_json( $email_values );
+
 
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
