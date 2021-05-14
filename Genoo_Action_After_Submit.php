@@ -74,49 +74,49 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         }
         // Make sure that there is a SelectEmail field ID
       
-		if ( empty( $settings['SelectEmail'] ) ) {
-		  
-			return;
-		}
-		
+        if ( empty( $settings['SelectEmail'] ) ) {
+          
+            return;
+        }
+        
         // Make sure that there is a SelectLeadFolder field ID
-		if ( empty( $settings['SelectLeadFolder'] ) ){
-		    
-		    return;
-		}
+        if ( empty( $settings['SelectLeadFolder'] ) ){
+            
+            return;
+        }
 
-		// Make sure that there is a SelectLeadType field ID
-		if ( empty( $settings['SelectLeadType'] ) ) {
-		   
-			return;
-		}
+        // Make sure that there is a SelectLeadType field ID
+        if ( empty( $settings['SelectLeadType'] ) ) {
+           
+            return;
+        }
 
         // Make sure that there is a Createleadtype field ID
-		if ( empty( $settings['Createleadtype'] ) ) {
-		   
-			return;
-		}
+        if ( empty( $settings['Createleadtype'] ) ) {
+           
+            return;
+        }
         
         // Make sure that there is a SelectWebinar field ID
-		if ( empty( $settings['SelectWebinar'] ) ) {
-		    
-		    	return;
-		    
-		}
-	
+        if ( empty( $settings['SelectWebinar'] ) ) {
+            
+                return;
+            
+        }
+    
 
-		// Get sumitetd Form data
-		$raw_fields = $record->get( 'fields' );
-		
+        // Get sumitetd Form data
+        $raw_fields = $record->get( 'fields' );
+        
 
 
-		// Normalize the Form Data
-		$fields = [];
-		foreach ( $raw_fields as $id => $field ) {
-			$fields[ $id ] = $field['value'];
-		}
+        // Normalize the Form Data
+        $fields = [];
+        foreach ( $raw_fields as $id => $field ) {
+            $fields[ $id ] = $field['value'];
+        }
 
-		// Make sure that the user entered an email
+        // Make sure that the user entered an email
 
         // Send the request
 
@@ -368,7 +368,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             //getting api response for leadtypes,
 
             $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
-            if ( !empty( $elementor_data ) ):
+        if ( !empty( $elementor_data ) ):
             $decode_datas = json_decode( $elementor_data );
             
             foreach ( $decode_datas as $decode_data )
@@ -409,25 +409,26 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                     }
                 }
             } 
-            else:
+        else:
             
             if ( method_exists( $WPME_API, 'callCustom' ) ):
-            try {
-                // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                foreach ( $leadTypes as $leadType ):
-                $leadtypes[0] = 'Select Lead Types';
-                $leadtypes[1] = '------------------';
-                $leadtypes[2] = 'Create lead type';
-                $leadtypes[$leadType->id] = $leadType->name;
-                endforeach;
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like folders not found
 
+                try {
+                    // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                        $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
+                        foreach ( $leadTypes as $leadType ):
+                        $leadtypes[0] = 'Select Lead Types';
+                        $leadtypes[1] = '------------------';
+                        $leadtypes[2] = 'Create lead type';
+                        $leadtypes[$leadType->id] = $leadType->name;
+                        endforeach;
+                    } catch( Exception $e ) {
+                        if ( $WPME_API->http->getResponseCode() == 404 ):
+                        // Looks like folders not found
+
+                        endif;
+                           }
                 endif;
-            }
-            endif;
 
             endif;
             return $leadtypes;
@@ -437,34 +438,31 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         public function emaildata()
         {
             global $WPME_API;
-
+            
             $id = $_REQUEST['selectid'];
-
+            
+             //getting api response for email.
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
-
-                if ( $id != 0 ):
-                $customfields = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
-                else:
-                $customfields = $WPME_API->getEmails();
-                endif;
-
-                  foreach ($customfields as $customfield ):
-                       $email_values[$customfield->id] = $customfield->name;
-                  endforeach;
-                          
-                wp_send_json( $email_values );
-
-
+                 if($id!=0):
+                  $email_datas = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
+                 else:
+                  $email_datas = $WPME_API->getEmails();
+                 endif;
+                foreach ($email_datas as $email_data ):
+                $emailtypes[$email_data->id] = $email_data->name;
+                endforeach;
+                wp_send_json( $emailtypes );
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like emails not found
+                // Looks like folders not found
 
                 endif;
             }
             endif;
-
+            
+       
         }
         
         //getting emails if email id already present in database
@@ -473,7 +471,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             global $post,$WPME_API;
 
             $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
-
+                   if(!empty($elementor_data)):
             $decode_datas = json_decode( $elementor_data );
             foreach ( $decode_datas as $decode_data )
             {
@@ -483,7 +481,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                  {
 
                     $data_element = $dataelement->elements;
-                    $customfields = '';
+                   // $customfields = '';
                     foreach ( $data_element as $elements_value )
                     {
 
@@ -492,16 +490,22 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                        //calling leadfields api for showing dropdown
                         if ( method_exists( $WPME_API, 'callCustom' ) ):
                         try {
-                            if ( $datavalue != 0 ):
+                            if ($datavalue != 0 && $dataemail == 0):
                             $customfields = $WPME_API->callCustom( '/emails/'.$datavalue, 'GET', NULL );
-                            //$email_values = array();
-                            foreach ( $customfields as $customfield ):
-                            $email_values[0] = 'Select emails';
+                               foreach($customfields as $customfield ):
+                            $email_values[0] = 'Select email';
                             $email_values[$customfield->id] = $customfield->name;
                             endforeach;
                             else:
-                            $email_values[0] = 'Select emails';
+                              $customfields = $WPME_API->getEmails();
+                            foreach ( $customfields as $customfield ):
+                                $email_values[0] = 'Select email';
+                                $email_values[$customfield->id] = $customfield->name;
+                            endforeach;
                             endif;
+                            //$email_values = array();
+                         
+                          
 
                         } catch( Exception $e ) {
                             if ( $WPME_API->http->getResponseCode() == 404 ):
@@ -516,6 +520,31 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
                 }
             }
+            else:
+                
+                    if ( method_exists( $WPME_API, 'callCustom' ) ):
+                        try {
+                           
+                            $customfields = $WPME_API->getEmails();
+                            
+                            //$email_values = array();
+                            foreach ( $customfields as $customfield ):
+                            $email_values[0] = 'Select email';
+                            $email_values[$customfield->id] = $customfield->name;
+                            endforeach;
+                         
+
+                        } catch( Exception $e ) {
+                            if ( $WPME_API->http->getResponseCode() == 404 ):
+                            // Looks like leadfields not found
+
+                            endif;
+                        }
+
+                        endif;
+                        
+                        endif;
+
 
             return $email_values;
 
@@ -529,7 +558,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         * @param array $element
         */
         //function for create new lead type
-        public function btnleadsave()	 
+        public function btnleadsave()    
         {
 
             global $WPME_API;
