@@ -174,7 +174,7 @@ jQuery(document).on("ready", function () {
               jQuery(
                 ".elementor-control-SelectEmail > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
               ).append(
-                '<option value="' + value.id + '">' + value.name + '</option>'
+                '<option value="' + key + '">' + value + '</option>'
               );
             });
 
