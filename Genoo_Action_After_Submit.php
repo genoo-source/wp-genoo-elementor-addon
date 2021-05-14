@@ -447,7 +447,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 if ( $id != 0 ):
                 $email_data = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
                 else:
-                $email_data = 'Select emails';
+                $email_data = $WPME_API->getEmails();
+
                 endif;
                 wp_send_json( $email_data );
 
