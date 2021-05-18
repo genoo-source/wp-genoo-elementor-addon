@@ -296,7 +296,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 foreach ( $leadTypes as $leadType ):
                 $leadtypes[0] = 'Select Lead Types';
                 $leadtypes[1] = '---------------------------------';
-                $leadtypes[2] = 'create lead type';
+                $leadtypes[2] = 'create leadtypes';
                 if ( $leadType->folder_id == $lead_id ):
                 $leadtypes[$leadType->id] = $leadType->name;
                 endif;
@@ -392,7 +392,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                             foreach ( $leadTypes as $leadType ):
                             $leadtypes[0] = 'Select Lead Types';
                             $leadtypes[1] = '------------------';
-                            $leadtypes[2] = 'Create lead type';
+                            $leadtypes[2] = 'create leadtypes';
                             if ( $leadType->folder_id == $dataleadtypefolder ):
                             $leadtypes[$leadType->id] = $leadType->name;
                             else:
@@ -419,7 +419,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         foreach ( $leadTypes as $leadType ):
                         $leadtypes[0] = 'Select Lead Types';
                         $leadtypes[1] = '------------------';
-                        $leadtypes[2] = 'Create lead type';
+                        $leadtypes[2] = 'create leadtypes';
                         $leadtypes[$leadType->id] = $leadType->name;
                         endforeach;
                     } catch( Exception $e ) {
