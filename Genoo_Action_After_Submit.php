@@ -208,7 +208,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             [
                 'label' => __( 'Select lead folder:', 'Genoo Elementor Extension' ),
                 'type' => \Elementor\Controls_Manager::SELECT,
-                'default' => $folderapi[-1],
+                'default' => $folderapi[0],
                 'options' =>  $this->folderapi(),
                 'label_block' => true,
                 'separator' => 'before',
