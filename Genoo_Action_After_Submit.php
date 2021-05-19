@@ -139,6 +139,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         $datasuccess = array_keys( $this->datasuccess() );
         $webinars = array_keys( $this->webinars() );
         $folderapi =  array_keys( $this->folderapi() );
+        
+       
        
         //start genoo/wpmktgengine section 
         $widget->start_controls_section(
@@ -206,8 +208,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             [
                 'label' => __( 'Select lead folder:', 'Genoo Elementor Extension' ),
                 'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => $folderapi[-1],
                 'options' =>  $this->folderapi(),
-                'default' =>  $folderapi[0],
                 'label_block' => true,
                 'separator' => 'before',
 
@@ -296,7 +298,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 foreach ( $leadTypes as $leadType ):
                 $leadtypes[0] = 'Select Lead Types';
                 $leadtypes[1] = '---------------------------------';
-                $leadtypes[2] = 'create leadtypes';
+                $leadtypes[2] = 'Create new lead type';
                 if ( $leadType->folder_id == $lead_id ):
                 $leadtypes[$leadType->id] = $leadType->name;
                 endif;
@@ -392,7 +394,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                             foreach ( $leadTypes as $leadType ):
                             $leadtypes[0] = 'Select Lead Types';
                             $leadtypes[1] = '------------------';
-                            $leadtypes[2] = 'create leadtypes';
+                            $leadtypes[2] = 'Create new lead type';
                             if ( $leadType->folder_id == $dataleadtypefolder ):
                             $leadtypes[$leadType->id] = $leadType->name;
                             else:
@@ -419,7 +421,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         foreach ( $leadTypes as $leadType ):
                         $leadtypes[0] = 'Select Lead Types';
                         $leadtypes[1] = '------------------';
-                        $leadtypes[2] = 'create leadtypes';
+                        $leadtypes[2] = 'Create new lead type';
                         $leadtypes[$leadType->id] = $leadType->name;
                         endforeach;
                     } catch( Exception $e ) {
@@ -596,10 +598,12 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 $getfolders = $WPME_API->callCustom( '/listLeadTypeFolders/Uncategorized', 'GET', 'NULL' );
 
                 foreach ( $getfolders as $getfolder ):
-
-                $foldernames[0] = 'Select Lead Folders';
-                $foldernames[$getfolder->type_id] = $getfolder->name;
-                endforeach;
+                    
+                  $foldernames[-1] = 'Select lead folder'; 
+                  $foldernames[0] = 'Uncategorized';
+                  $foldernames[$getfolder->type_id] = $getfolder->name;
+                  
+                  endforeach;
 
             } catch( Exception $e ) { }
 
