@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.17
+ * Version:     1.3.18
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -207,24 +207,29 @@ add_action( 'elementor_pro/forms/new_record', function( $record, $ajax_handler )
       
    }
    
-   if (method_exists($WPME_API, 'callCustom')):
-       
-       try {
-         $response = $WPME_API->callCustom('/leadformsubmit','POST',$selectvalues);
-         
-       }
-        catch(Exception $e) {
-               
-            }
-        
-         $genoo = $response->genoo_id;
-         setcookie('_gtld', $genoo, time() + (10 * 365 * 24 * 60 * 60));
-                           
-        endif;
-         
-    
+if (method_exists($WPME_API, 'callCustom')):
+        try
+        {
+            $response = $WPME_API->callCustom('/leadformsubmit', 'POST', $selectvalues);
+             if ($WPME_API->http->getResponseCode() == 204): // No values based on folderdid onchange! Ooops
+             elseif ($WPME_API->http->getResponseCode() == 200):
 
-endif;
+             endif;
+        }
+        catch(Exception $e)
+        {
+            if ($WPME_API->http->getResponseCode() == 404):
+                            // Looks like leadfields not found
+                            
+            endif;
+        }
+        endif;
+             
+        $genoo_ids = $response->genoo_id;
+               
+        setcookie('_gtld', $genoo_ids, (time() + (10 * 365 * 24 * 60 * 60)), "/");
+
+        endif;
    
 }, 10, 2);
 
