@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.20
+ * Version:     1.3.21
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -233,7 +233,12 @@ if (method_exists($WPME_API, 'callCustom')):
    
 }, 10, 2);
 
-
+add_action('wp_head', 'myplugin_ajaxurls');
+  function myplugin_ajaxurls() {
+        echo '<script type="text/javascript">
+            var ajaxurl = "' . admin_url('admin-ajax.php') . '";
+            </script>';
+            }
 final class Genoo_Elementor_Extension
 {
 
