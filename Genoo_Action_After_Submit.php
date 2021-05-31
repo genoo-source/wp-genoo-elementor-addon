@@ -34,8 +34,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         //get leadtypes id form leadfolder by using particular leadfolderid 
         add_action( 'wp_ajax_sendleadfolder', array( $this, 'sendleadfolder' ) );
         //get form name update
-        add_action( 'wp_ajax_savedata', array( $this, 'savedata' ) );
-
+       
         //emaildata
     }
     // default name of function
@@ -590,58 +589,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             return $foldernames;
         }
 
-        public function savedata() {
-
-            global $WPME_API, $wp;
-
-            $form_name = $_REQUEST['formname'];
-            $post_id =  $_REQUEST['post_id'];
-            $formid =  $_REQUEST['formid'];
-
-            $values = array();
-
-            $values['form_name'] = $form_name;
-
-            $values['form_type'] = 'EF';
-
-            $post_meta_value  = get_post_meta( $post_id, $formid, true );
-
-            if ( $post_meta_value == '' ) {
-
-                $values['form_id'] = '0';
-            } else {
-
-                $values['form_id'] = $post_meta_value;
-
-            }
-
-            if ( method_exists( $WPME_API, 'callCustom' ) ):
-
-            try {
-                $response = $WPME_API->callCustom( '/saveExternalForm', 'POST', $values );
-
-                if ( $WPME_API->http->getResponseCode() == 204 ): // No values based on form name, form id onchange! Ooops
-                elseif ( $WPME_API->http->getResponseCode() == 200 ):
-
-                if ( $post_meta_value == $response->genoo_form_id ):
-                update_post_meta( $post_id, $formid, $response->genoo_form_id );
-                else:
-                add_post_meta( $post_id, $formid, $response->genoo_form_id );
-
-                endif;
-
-                endif;
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like formname or form id not found
-
-                endif;
-            }
-            endif;
-
-            //    wp_send_json( $response );
-
-        }
+   
 
         //default function in action after submit
 
