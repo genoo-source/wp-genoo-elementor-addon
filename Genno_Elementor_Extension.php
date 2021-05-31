@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.22
+ * Version:     1.3.23
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -248,11 +248,11 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
      
     //   if(!empty($editor_data)):
            
-     foreach($editor_data as $dcode)
+     foreach($editor_data as $elementorcode)
      {
        
      
-          foreach($dcode['elements'] as $code)
+          foreach($elementorcode['elements'] as $code)
              {
                  
                     $values = array();
@@ -286,9 +286,7 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
                 $code_ids[] = $codeset['id'];
                 
                 
-                
-         
-             
+              
                    }
              
                  
@@ -302,23 +300,21 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
   
         $deleting_data = $wpdb->get_results("SELECT `meta_key` FROM  $wpdb->postmeta where `post_id` = $post_id AND meta_key LIKE 'code_%'");
              
-         $meta_types =  array_column($deleting_data, 'meta_key');
+        $meta_types =  array_column($deleting_data, 'meta_key');
          
-         $unique_values = array_unique($meta_types);
+        $unique_values = array_unique($meta_types);
          
             
              $deletevalues = array();
          
-            foreach($unique_values as $code_id_id)
+            foreach($unique_values as $delete_id)
             {
                 
-              $coding_id = substr($code_id_id, strpos($code_id_id, "_") + 1);   
+              $coding_id = substr($delete_id, strpos($delete_id, "_") + 1);   
               
               if(!in_array($coding_id,$code_ids))
               {
                 
-             
-               
                  $form_id = get_post_meta($post_id,'code_'.$coding_id,true);
                
                  $form_title = get_post_meta($post_id,$form_id,true);
@@ -356,16 +352,13 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
                 
             }
          
-      
-     
-    
-  
+   
 }
 
 //add the action after details store
 add_action('elementor/editor/after_save', 'custom_elementor_db_after_save', 10, 2);
 
-
+//save form data into wpmktgengine
 function update_function($values,$post_id,$code_id)
 {
     global $WPME_API,$wpdb;
@@ -417,6 +410,73 @@ function update_function($values,$post_id,$code_id)
 }
 
 
+//if user deletes the post form should be deleted
+add_action('before_delete_post', 'custom_post_delete_function');
+
+function custom_post_delete_function($postid)
+{
+    global $wpdb,$WPME_API;
+    
+    
+    $elementor_data = get_post_meta($postid,'_elementor_data',true);
+    
+        $decode_datas = json_decode( $elementor_data );
+            
+            foreach ( $decode_datas as $decode_data )
+            {
+                $data = $decode_data->elements;
+
+                foreach ( $data as $dataelement )
+                 {
+
+                    $data_element = $dataelement->elements;
+                    
+                    $deletevalues = array();
+                    
+                    foreach ( $data_element as $elements_value )
+                      {
+                        
+                          $form_id = get_post_meta($postid,'code_'.$elements_value->id,true);
+               
+                          $form_title = get_post_meta($postid,$form_id,true);
+                          
+                          
+                              $deletevalues['form_name'] = $form_title;
+                              
+                              $deletevalues['form_id'] = $form_id;
+                    
+                                         
+                 if (method_exists($WPME_API, 'callCustom')):
+       
+                            try {
+                            $deleteresponse = $WPME_API->callCustom('/deleteGravityForm','DELETE',$deletevalues);
+                                             
+                            if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
+                            elseif ($WPME_API->http->getResponseCode() == 200):
+                                                        
+                            delete_post_meta($postid,'code_'.$coding_id);
+                            
+                            delete_post_meta($postid,$form_id);
+                                                   
+                            endif;
+                            }
+                            catch(Exception $e) {
+                                
+                             if ($WPME_API->http->getResponseCode() == 404):
+                                                        // Looks like formname or form id not found
+                             endif;
+                                }
+                            endif;    
+      
+                         
+                         
+                      }
+                 }
+                 
+               
+            }         
+    
+}
 
 
 final class Genoo_Elementor_Extension
