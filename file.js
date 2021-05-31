@@ -272,32 +272,7 @@ jQuery(document).on(
       jQuery(".elementor-control-SelectLeadType").removeAttr("style");
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
     }
-    const params = new URLSearchParams(window.location.search);
-
-    var postid = params.get("post");
-
-    var form = jQuery(
-      ".elementor-control-form_name  > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > input"
-    );
-    var formid = jQuery(
-      ".elementor-control-_id > .elementor-control-content > input"
-    ).val();
-    var formname = jQuery(form).val();
-    jQuery.ajax({
-      url: ajaxurl,
-      type: "POST",
-      cache: false,
-      data: {
-        action: "savedata",
-        formname: formname,
-        post_id: postid,
-        formid: formid
-      },
-      success: function (data) {},
-      error: function (errorThrown) {
-        console.log(errorThrown);
-      }
-    });
+  
   }
 );
 //}

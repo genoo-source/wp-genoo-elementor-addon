@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.21
+ * Version:     1.3.22
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -239,6 +239,186 @@ add_action('wp_head', 'myplugin_ajaxurls');
             var ajaxurl = "' . admin_url('admin-ajax.php') . '";
             </script>';
             }
+
+// define the elementor/db/before_save callback 
+function custom_elementor_db_after_save( $post_id, array $editor_data ){
+   //custom code here
+   global $WPME_API,$wpdb;
+   
+     
+    //   if(!empty($editor_data)):
+           
+     foreach($editor_data as $dcode)
+     {
+       
+     
+          foreach($dcode['elements'] as $code)
+             {
+                 
+                    $values = array();
+                    
+                    $code_id = array();
+                    
+                   foreach($code['elements'] as $codeset){
+                   
+                     $values['form_name'] = $codeset['settings']['form_name'];
+
+                     $values['form_type'] = 'EF';
+                     
+                     $code_id['id'] = $codeset['id'];
+                     
+                     $get_values = get_post_meta($post_id,'code_'.$codeset['id'] ,true);
+                     
+                         if($get_values=='')
+                         {
+                          $values['form_id'] = '0';    
+                         }
+                         else
+                         {
+                          $values['form_id'] = $get_values;
+                         }
+                         
+                      
+                 update_function($values,$post_id,$codeset['id']);
+
+             
+             
+                $code_ids[] = $codeset['id'];
+                
+                
+                
+         
+             
+                   }
+             
+                 
+             }
+             
+             
+           
+      
+     }
+     
+  
+        $deleting_data = $wpdb->get_results("SELECT `meta_key` FROM  $wpdb->postmeta where `post_id` = $post_id AND meta_key LIKE 'code_%'");
+             
+         $meta_types =  array_column($deleting_data, 'meta_key');
+         
+         $unique_values = array_unique($meta_types);
+         
+            
+             $deletevalues = array();
+         
+            foreach($unique_values as $code_id_id)
+            {
+                
+              $coding_id = substr($code_id_id, strpos($code_id_id, "_") + 1);   
+              
+              if(!in_array($coding_id,$code_ids))
+              {
+                
+             
+               
+                 $form_id = get_post_meta($post_id,'code_'.$coding_id,true);
+               
+                 $form_title = get_post_meta($post_id,$form_id,true);
+               
+                  $deletevalues['form_name'] = $form_title;
+                  $deletevalues['form_id'] = $form_id;
+                    
+                                         
+                 if (method_exists($WPME_API, 'callCustom')):
+       
+                            try {
+                            $deleteresponse = $WPME_API->callCustom('/deleteGravityForm','DELETE',$deletevalues);
+                                             
+                            if ($WPME_API->http->getResponseCode() == 204): // No values based on form name,form id onchange! Ooops
+                            elseif ($WPME_API->http->getResponseCode() == 200):
+                                                        
+                            delete_post_meta($post_id,'code_'.$coding_id);
+                            delete_post_meta($post_id,$form_id);
+                                                   
+                            endif;
+                            }
+                            catch(Exception $e) {
+                             if ($WPME_API->http->getResponseCode() == 404):
+                                                        // Looks like formname or form id not found
+                                                        
+                              endif;
+                                }
+                            endif;    
+                                                          
+               
+                  
+              }
+              
+              
+                
+            }
+         
+      
+     
+    
+  
+}
+
+//add the action after details store
+add_action('elementor/editor/after_save', 'custom_elementor_db_after_save', 10, 2);
+
+
+function update_function($values,$post_id,$code_id)
+{
+    global $WPME_API,$wpdb;
+    
+        $get_value = get_post_meta($post_id,'code_'.$code_id,true);
+    
+           if ( method_exists( $WPME_API, 'callCustom' ) ):
+
+               try {
+                   
+                $response = $WPME_API->callCustom( '/saveExternalForm', 'POST', $values );
+
+                if ( $WPME_API->http->getResponseCode() == 204 ): // No values based on form name, form id onchange! Ooops
+                
+                elseif ( $WPME_API->http->getResponseCode() == 200 ):
+                    
+                  
+
+               if ($get_value  ==  $response->genoo_form_id ):
+                    
+                update_post_meta( $post_id,$response->genoo_form_id,$values['form_name']);
+                
+                update_post_meta( $post_id,'code_'.$code_id,$response->genoo_form_id );
+                
+         
+                else:
+                     
+                add_post_meta( $post_id,$response->genoo_form_id,$values['form_name']);
+                
+                add_post_meta( $post_id,'code_'.$code_id,$response->genoo_form_id );
+                
+             
+              
+                endif;
+                
+                   endif;
+            } catch( Exception $e ) {
+                
+                if ( $WPME_API->http->getResponseCode() == 404 ):
+                // Looks like formname or form id not found
+
+                endif;
+            }
+            endif; 
+                
+             
+       
+    
+}
+
+
+
+
 final class Genoo_Elementor_Extension
 {
 
