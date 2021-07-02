@@ -67,7 +67,7 @@ class Elementor_Forms_Patterns_Validation {
 
         // insert new class field in advanced tab before field ID control
         $new_order = [];
-        foreach ($control_data['fields'] as $field_key => $field ) {
+        foreach ( $control_data['fields'] as $field_key => $field ) {
             if ( 'custom_id' === $field['name'] ) {
                 $new_order['third_party_input'] = $third_party_input;
 
@@ -83,8 +83,8 @@ class Elementor_Forms_Patterns_Validation {
 
     }
     //show leadfields for mapping
-    public function map_fields()
-    {
+
+    public function map_fields() {
         global $WPME_API;
 
         //calling leadfields api for showing dropdown

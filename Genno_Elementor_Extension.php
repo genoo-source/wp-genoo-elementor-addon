@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.3.23
+ * Version:     1.3.24
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -68,18 +68,6 @@ register_activation_hook(__FILE__, function () {
 
 });
 
-
-add_action('admin_menu', 'Genoo_elementor');
-function Genoo_elementor()
-{
-    add_menu_page('Genoo Addons', 'Genoo Addons', 'manage_options', 'api_manager', 'viewDashboard');
-}
-
-function viewDashboard()
-{
-    echo "genoo addons plugin occurs";
-}
-
 //add form,cta,survey widgets in elementor categories.
 function add_elementor_widget_categories()
 {
@@ -99,7 +87,6 @@ add_action( 'elementor_pro/init', function() {
 	// Here its safe to include our action class file
 include_once( 'Genoo_Action_After_Submit.php' );
 include_once('Elementor_Forms_Patterns_Validation.php' );
-
 	// Instantiate the action class
 $sendy_action = new Genoo_Action_After_Submit();
 
@@ -247,11 +234,11 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
    
      
     //   if(!empty($editor_data)):
-           
+    
+       
      foreach($editor_data as $elementorcode)
      {
-       
-     
+      
           foreach($elementorcode['elements'] as $code)
              {
                  
@@ -260,12 +247,12 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
                     $code_id = array();
                     
                    foreach($code['elements'] as $codeset){
-                   
-                     $values['form_name'] = $codeset['settings']['form_name'];
-
-                     $values['form_type'] = 'EF';
+                       
+                    $values['form_name'] = $codeset['settings']['form_name'];
+                    
+                    $values['form_type'] = 'EF';
                      
-                     $code_id['id'] = $codeset['id'];
+                    $code_id['id'] = $codeset['id'];
                      
                      $get_values = get_post_meta($post_id,'code_'.$codeset['id'] ,true);
                      
@@ -281,20 +268,13 @@ function custom_elementor_db_after_save( $post_id, array $editor_data ){
                       
                  update_function($values,$post_id,$codeset['id']);
 
-             
-             
-                $code_ids[] = $codeset['id'];
+                 $code_ids[] = $codeset['id'];
                 
-                
-              
-                   }
+                }
              
                  
              }
-             
-             
-           
-      
+            
      }
      
   
@@ -478,7 +458,12 @@ function custom_post_delete_function($postid)
     
 }
 
-
+add_action( 'elementor_pro/forms/default_submit_actions', function ( $actions ) {
+    			return array_merge( $actions, [ 'Genoo / WPMktgEngine' ] );
+    		} );
+  
+  
+  
 final class Genoo_Elementor_Extension
 {
 
