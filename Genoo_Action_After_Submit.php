@@ -368,9 +368,9 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
                 foreach ( $data as $dataelement ) {
 
-                    $data_elementste = $dataelement->elements;
+                    $data_elements_value = $dataelement->elements;
 
-                    foreach ( $data_elementste as $elements_value ) {
+                    foreach ( $data_elements_value as $elements_value ) {
 
                         $dataleadtypefolder = $elements_value->settings->SelectLeadFolder;
                         $dataleadtype = $elements_value->settings->SelectLeadType;
