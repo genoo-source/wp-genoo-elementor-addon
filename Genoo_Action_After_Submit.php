@@ -2,7 +2,7 @@
 /**
 * Class Genoo_Action_After_Submit
 * @see https://developers.elementor.com/custom-form-action/
-* Custom elementor form action after submit to add a settings 
+* Custom elementor form action after submit to add a settings
 * Genoo_Action_After_Submit list via API
 */
 use WPMKTENGINE\Wordpress\Utils;
@@ -24,8 +24,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
     * @return string
     */
 
-    public function __construct()
-    {
+    public function __construct() {
         //get email data while select email folders
         add_action( 'wp_ajax_emaildata', array( $this, 'emaildata' ) );
         add_action( 'elementor/action_after_submit/before_save', $this, $data );
@@ -139,10 +138,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         $datasuccess = array_keys( $this->datasuccess() );
         $webinars = array_keys( $this->webinars() );
         $folderapi =  array_keys( $this->folderapi() );
-        
-       
-       
-        //start genoo/wpmktgengine section 
+
+        //start genoo/wpmktgengine section
         $widget->start_controls_section(
             'section_genoo',
             [
@@ -150,8 +147,12 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 'label' => __( 'Genoo / WPMktgEngine', 'Genoo Elementor Extension' ),
                 'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
                 'classes' => 'mycustomclass',
+                'condition' => [
+                    'submit_actions' => $this->get_name(),
+                ],
             ]
         );
+
         $widget->add_control(
             'SelectEmailfolder',
             [
@@ -209,7 +210,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         $widget->add_control(
             'SelectLeadType',
             [
-                'label' => __('Select LeadType (where leads will be put who submit this form):', 'Genoo Elementor Extension' ),
+                'label' => __( 'Select LeadType (where leads will be put who submit this form):', 'Genoo Elementor Extension' ),
                 'type' => \Elementor\Controls_Manager::SELECT,
                 'options' =>  $this->getleadtypes(),
                 'default' =>  $getleadtypes[0],
@@ -278,6 +279,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
         public function sendleadfolder() {
             global $WPME_API;
+
             $lead_id = $_REQUEST['lead_folder_id'];
 
             //getting api response for leadtypes.
@@ -366,9 +368,10 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
                 foreach ( $data as $dataelement ) {
 
-                    $data_element = $dataelement->elements;
+                    $data_elementste = $dataelement->elements;
 
-                    foreach ( $data_element as $elements_value ) {
+                    foreach ( $data_elementste as $elements_value ) {
+
                         $dataleadtypefolder = $elements_value->settings->SelectLeadFolder;
                         $dataleadtype = $elements_value->settings->SelectLeadType;
 
@@ -377,14 +380,12 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                             // Make a GET request, to Genoo / WPME api, for that rest endpoint
                             $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
                             foreach ( $leadTypes as $leadType ):
+
                             $leadtypes[0] = 'Select Lead Types';
                             $leadtypes[1] = '------------------';
                             $leadtypes[2] = 'Create new lead type';
-                            if ( $leadType->folder_id == $dataleadtypefolder ):
+                            if ( $dataleadtypefolder == $leadType->folder_id ):
                             $leadtypes[$leadType->id] = $leadType->name;
-                            else:
-                            $leadtypes[$leadType->id] = $leadType->name;
-
                             endif;
                             endforeach;
                         } catch( Exception $e ) {
@@ -473,18 +474,13 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         //calling leadfields api for showing dropdown
                         if ( method_exists( $WPME_API, 'callCustom' ) ):
                         try {
-                            if ( $datavalue != 0 && $dataemail == 0 ):
+                            if ( $datavalue != 0 ):
                             $customfields = $WPME_API->callCustom( '/emails/'.$datavalue, 'GET', NULL );
                             foreach ( $customfields as $customfield ):
                             $email_values[0] = 'Select email';
                             $email_values[$customfield->id] = $customfield->name;
                             endforeach;
-                            else:
-                            $customfields = $WPME_API->getEmails();
-                            foreach ( $customfields as $customfield ):
-                            $email_values[0] = 'Select email';
-                            $email_values[$customfield->id] = $customfield->name;
-                            endforeach;
+
                             endif;
                             //$email_values = array();
 
@@ -588,8 +584,6 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             endif;
             return $foldernames;
         }
-
-   
 
         //default function in action after submit
 
