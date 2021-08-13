@@ -29,7 +29,7 @@ class Elementor_Forms_Patterns_Validation {
             'third_party_input',
             [
                 'name' => 'third_party_input',
-                'label' => 'Genoo/WPMktgEngine Field:',
+                'label' => 'Genoo/WPMktEngine Field:',
                 'inner_tab' => 'form_fields_advanced_tab',
                 'tab' => 'content',
                 'tabs_wrapper' => 'form_fields_tabs',
