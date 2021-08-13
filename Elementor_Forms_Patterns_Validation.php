@@ -91,9 +91,9 @@ class Elementor_Forms_Patterns_Validation {
         if ( method_exists( $WPME_API, 'callCustom' ) ):
         try {
             $customfields = $WPME_API->callCustom( '/leadfields', 'GET', NULL );
-            if ( $WPME_API->http->getResponseCode() == 204 ): // No leadfields based on folderdid onchange! Ooops
+            if ( $WPME_API->http->getResponseCode() == 204 ): // No leadfields based on folderdid onchange!
             elseif ( $WPME_API->http->getResponseCode() == 200 ):
-            $customfieldsjson = $customfields;
+            $customtypefields = $customfields;
             endif;
         } catch( Exception $e ) {
             if ( $WPME_API->http->getResponseCode() == 404 ):
@@ -104,7 +104,7 @@ class Elementor_Forms_Patterns_Validation {
 
         endif;
         $pre_mapped_fields = array( 'First Name', 'Last Name', 'Email', 'Comments' );
-        foreach ( $customfieldsjson as $customfields ):
+        foreach ( $customtypefields as $customfields ):
         if ( !in_array( trim( $customfields->label ), $pre_mapped_fields ) ):
         $map_fields[0] = 'Do not map fields';
         $map_fields[$customfields->key] = $customfields->label;
