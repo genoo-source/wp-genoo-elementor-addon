@@ -1,18 +1,15 @@
 === Genoo Elementor Extension Plugin===
-
-Installation
-
-git download
-
-https://github.com/genoo-source/wp-genoo-elementor-addon/archive/master.zip
-
-#Download zip file from github.
-#Navigate to Plugins > Add New.
-#Click the Upload Plugin button at the top of the screen.
-#Select the zip file from your local filesystem.
-#Click the Install Now button.
-#When installation is complete, you’ll see “Plugin installed successfully.” Click the Activate Plugin button at the bottom of the page.
+Contributors: Genoo
+Tags: email marketing automation, landing page builder, email marketing, lead generation, online marketing, CRM
+Requires at least: 4.6.0
+Tested up to: 5.8.1
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Stable tag: 1.4.0
 
 
+Genoo Elementor Extension
 
+== Description ==
+Integrates Genoo/WPMktgEngine with Elementor Forms, so can push directly into the Genoo/WPMktgEngine Lead database.
 
