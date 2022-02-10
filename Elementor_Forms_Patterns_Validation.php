@@ -49,11 +49,6 @@ class Elementor_Forms_Patterns_Validation {
                             'operator' => '!==',
                             'value' => 'email'
                         ],
-                        [
-                            'name' => 'custom_id',
-                            'operator' => '!==',
-                            'value' => 'message'
-                        ],
 
                     ]
                 ],
@@ -103,7 +98,7 @@ class Elementor_Forms_Patterns_Validation {
         }
 
         endif;
-        $pre_mapped_fields = array( 'First Name', 'Email', 'Comments' );
+        $pre_mapped_fields = array( 'First Name', 'Email');
         foreach ( $customfieldsjson as $customfields ):
         if ( !in_array( trim( $customfields->label ), $pre_mapped_fields ) ):
         $map_fields[0] = 'Do not map fields';

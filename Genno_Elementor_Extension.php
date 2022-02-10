@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.4.2
+ * Version:     1.4.3
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -81,6 +81,21 @@ function add_elementor_widget_categories()
 }
 //elementor categories registered for form,survey
 add_action('elementor/elements/categories_registered', 'add_elementor_widget_categories');
+add_action('wpmktengine_init', function($repositarySettings, $api, $cache){
+
+    /**
+    
+     * Add extensions to the Extensions list
+    
+     */
+    add_filter('wpmktengine_tools_extensions_widget', function($array){
+    
+        $array['ElementorExtention'] = '<span style="color:green">Active</span>';
+    
+        return $array;
+    
+    }, 10, 1);
+    }, 10, 3);
 
 //form integration
 add_action( 'elementor_pro/init', function() {
@@ -176,17 +191,12 @@ add_action( 'elementor_pro/forms/new_record', function( $record, $ajax_handler )
                 $custom_values['custom_id']='email';
                 update_post_meta($post->ID,'email',$val); 
                 $selectvalues['email'] = $val;
-            elseif($custom_values['custom_id'] =='message'):
-                update_post_meta($post->ID,'comments_txt',$val);
-                $selectvalues['comments_txt'] = $val; 
-            else :
-                $selectvalues[$custom_values['custom_id']] = $val;
-                update_post_meta($post->ID,$custom_values['custom_id'],$val); 
-                              
-            endif;
-                             
-            endif;
-        endif;
+           else :
+	   $selectvalues[$custom_values['custom_id']] = $val;
+	   update_post_meta($post->ID,$custom_values['custom_id'],$val); 
+	   endif;
+	   endif;
+	   endif;
             
         }
        
