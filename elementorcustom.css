@@ -1,0 +1,11 @@
+.elementor-control-third_party_input .elementor-control-content .elementor-control-field {
+    flex-direction: column;
+    align-items: flex-start;
+}
+.elementor-control-third_party_input .elementor-control-content .elementor-control-field label.elementor-control-title {
+    margin-bottom: 5px;
+}
+.elementor-control-third_party_input .elementor-control-content .elementor-control-field .elementor-control-input-wrapper {
+    float: left;
+    width: 100%;
+}

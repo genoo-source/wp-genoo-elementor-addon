@@ -154,47 +154,6 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         );
 
         $widget->add_control(
-            'SelectEmailfolder',
-            [
-                'label' => __( 'Select Email Folder:', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SELECT,
-                'options' =>  $this->getemailfolders(),
-                'default' => $getemailfolders[0],
-                'placeholder' => 'Select email folders',
-                'label_block' => true,
-                'separator' => 'before'
-
-            ]
-        );
-
-        $widget->add_control(
-            'SelectEmail',
-            [
-                'label' => __( 'Select Email to Send:', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SELECT,
-                'options' =>  $this->datasuccess(),
-                'default' => $datasuccess[0],
-                'label_block' => true,
-                'required' => true,
-                'separator' => 'before',
-
-                'conditions' => [
-                    'relation' => 'and',
-                    'terms' => [
-                        [
-                            'name' => 'SelectEmailfolder',
-                            'operator' => '!==',
-                            'value' => 0
-                        ]
-
-                    ]
-
-                ],
-
-            ]
-        );
-
-        $widget->add_control(
             'SelectLeadFolder',
             [
                 'label' => __( 'Select lead folder:', 'Genoo Elementor Extension' ),
@@ -243,6 +202,49 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         );
 
         $widget->add_control(
+            'SelectEmailfolder',
+            [
+                'label' => __( 'Select Email Folder:', 'Genoo Elementor Extension' ),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' =>  $this->getemailfolders(),
+                'default' => $getemailfolders[0],
+                'placeholder' => 'Select email folders',
+                'label_block' => true,
+                'separator' => 'before'
+
+            ]
+        );
+
+        $widget->add_control(
+            'SelectEmail',
+            [
+                'label' => __( 'Select Email to Send:', 'Genoo Elementor Extension' ),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' =>  $this->datasuccess(),
+                'default' => $datasuccess[0],
+                'label_block' => true,
+                'required' => true,
+                'separator' => 'before',
+
+                'conditions' => [
+                    'relation' => 'and',
+                    'terms' => [
+                        [
+                            'name' => 'SelectEmailfolder',
+                            'operator' => '!==',
+                            'value' => 0
+                        ]
+
+                    ]
+
+                ],
+
+            ]
+        );
+
+     
+
+        $widget->add_control(
             'show_title',
             [
                 'label_on' => __( 'Show', 'Genoo Elementor Extension' ),
@@ -286,11 +288,12 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                foreach ( $leadTypes as $leadType ):
                 $leadtypes[0] = 'Select Lead Types';
                 $leadtypes[1] = '---------------------------------';
                 $leadtypes[2] = 'Create new lead type';
+                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
+                foreach ( $leadTypes as $leadType ):
+               
                 if ( $leadType->folder_id == $lead_id ):
                 $leadtypes[$leadType->id] = $leadType->name;
                 endif;
@@ -309,18 +312,20 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         public static function getemailfolders() {
             global $WPME_API;
             //getting api response for leadtypes, zoomwebinars, emailfolders
+          
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
+                $emailfolderslead[0] = 'Select Email Folders';
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
                 $emailfolders = $WPME_API->callCustom( '/emailfolders', 'GET', NULL );
                 foreach ( $emailfolders as $emailfolder ):
-                $emailfolderslead[0] = 'Select Email Folders';
+              
                 $emailfolderslead[$emailfolder->id] = $emailfolder->name;
                 endforeach;
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
                 // Looks like folders not found
-
+                $emailfolderslead[0] = 'Select Email Folders';
                 endif;
             }
             endif;
@@ -332,19 +337,24 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
             global $WPME_API;
             //getting api response for leadtypes, zoomwebinars, emailfolders
+
             if ( method_exists( $WPME_API, 'callCustom' ) ):
-            try {
+             try {
+                $zoomwebinarslead[0] = 'Select webinars';
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
                 $zoomwebinars = $WPME_API->callCustom( '/zoomwebinars/all', 'GET', NULL );
-
+               
+        
+                if (is_array($zoomwebinars) || is_object($zoomwebinars))
+                {
                 foreach ( $zoomwebinars as $zoomwebinar ):
-                $zoomwebinarslead[0] = 'Select webinars';
-                $zoomwebinarslead[$zoomwebinar->id] = $zoomwebinar->startdate .' ::'.$zoomwebinar->name;
+                    $zoomwebinarslead[$zoomwebinar->id] = $zoomwebinar->startdate .' ::'.$zoomwebinar->name;
                 endforeach;
+            } 
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
                 // Looks like folders not found
-
+                $zoomwebinarslead[0] = 'Select webinars';
                 endif;
             }
             endif;
@@ -378,11 +388,10 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         if ( method_exists( $WPME_API, 'callCustom' ) ):
                         try {
                             // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                            $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                            foreach ( $leadTypes as $leadType ):
-
                             $leadtypes[0] = 'Select Lead Types';
                             $leadtypes[1] = '------------------';
+                            $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
+                            foreach ( $leadTypes as $leadType ):
                             $leadtypes[2] = 'Create new lead type';
                             if ( $dataleadtypefolder == $leadType->folder_id ):
                             $leadtypes[$leadType->id] = $leadType->name;
@@ -391,7 +400,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         } catch( Exception $e ) {
                             if ( $WPME_API->http->getResponseCode() == 404 ):
                             // Looks like folders not found
-
+                            $leadtypes[0] = 'Select Lead Types';
+                            $leadtypes[1] = '------------------';
                             endif;
                         }
                         endif;
@@ -402,18 +412,20 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             if ( method_exists( $WPME_API, 'callCustom' ) ):
 
             try {
+                $leadtypes[0] = 'Select Lead Types';
+                $leadtypes[1] = '------------------';
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
                 $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
                 foreach ( $leadTypes as $leadType ):
-                $leadtypes[0] = 'Select Lead Types';
-                $leadtypes[1] = '------------------';
+             
                 $leadtypes[2] = 'Create new lead type';
                 $leadtypes[$leadType->id] = $leadType->name;
                 endforeach;
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
                 // Looks like folders not found
-
+                $leadtypes[0] = 'Select Lead Types';
+                $leadtypes[1] = '------------------';
                 endif;
             }
             endif;
@@ -433,6 +445,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                
                 if ( $id != 0 ):
                 $email_datas = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
                 else:
@@ -473,12 +486,12 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         $dataemail = $elements_value->settings->SelectEmail;
                         //calling leadfields api for showing dropdown
                         if ( method_exists( $WPME_API, 'callCustom' ) ):
+                            $email_values[0] = 'Select email';
                         try {
                             if ( $datavalue != 0 ):
                             $customfields = $WPME_API->callCustom( '/emails/'.$datavalue, 'GET', NULL );
                             foreach ( $customfields as $customfield ):
-                            $email_values[0] = 'Select email';
-                            $email_values[$customfield->id] = $customfield->name;
+                             $email_values[$customfield->id] = $customfield->name;
                             endforeach;
 
                             endif;
@@ -487,7 +500,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         } catch( Exception $e ) {
                             if ( $WPME_API->http->getResponseCode() == 404 ):
                             // Looks like leadfields not found
-
+                            $email_values[0] = 'Select email';
                             endif;
                         }
 
@@ -500,19 +513,19 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
-
+                $email_values[0] = 'Select email';
                 $customfields = $WPME_API->getEmails();
 
                 //$email_values = array();
                 foreach ( $customfields as $customfield ):
-                $email_values[0] = 'Select email';
+                
                 $email_values[$customfield->id] = $customfield->name;
                 endforeach;
 
             } catch( Exception $e ) {
                 if ( $WPME_API->http->getResponseCode() == 404 ):
                 // Looks like leadfields not found
-
+                $email_values[0] = 'Select email';
                 endif;
             }
 
@@ -567,18 +580,17 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
             global $WPME_API;
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
+                $foldernames[-1] = 'Select lead folder';
                 $getfolders = $WPME_API->callCustom( '/listLeadTypeFolders/Uncategorized', 'GET', 'NULL' );
 
                 foreach ( $getfolders as $getfolder ):
-
-                $foldernames[-1] = 'Select lead folder';
-
-                $foldernames[0] = 'Uncategorized';
-                $foldernames[$getfolder->type_id] = $getfolder->name;
+                  $foldernames[0] = 'Uncategorized';
+                  $foldernames[$getfolder->type_id] = $getfolder->name;
 
                 endforeach;
 
             } catch( Exception $e ) {
+                $foldernames[-1] = 'Select lead folder';
             }
 
             endif;
