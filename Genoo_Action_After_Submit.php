@@ -140,138 +140,126 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         $folderapi =  array_keys( $this->folderapi() );
 
         //start genoo/wpmktgengine section
-        $widget->start_controls_section(
-            'section_genoo',
-            [
+        $widget->start_controls_section('section_genoo', [
+            'label' => __('Genoo / WPMktgEngine', 'Genoo Elementor Extension'),
+            'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            'classes' => 'mycustomclass',
+            'condition' => [
+                'submit_actions' => $this->get_name(),
+            ],
+        ]);
 
-                'label' => __( 'Genoo / WPMktgEngine', 'Genoo Elementor Extension' ),
-                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
-                'classes' => 'mycustomclass',
-                'condition' => [
-                    'submit_actions' => $this->get_name(),
+        $widget->add_control('labelleadtypeitem', [
+            'label' => __(
+                'Select LeadType (where leads will be put who submit this form):',
+                'Genoo Elementor Extension'
+            ),
+            'type' => \Elementor\Controls_Manager::RAW_HTML,
+            'raw' => __('<div></div>'),
+            'content_classes' => 'html_lead_type_develop',
+        ]);
+
+        $widget->add_control('SelectLeadFolder', [
+            'label' => __('Select lead folder:', 'Genoo Elementor Extension'),
+            'type' => \Elementor\Controls_Manager::SELECT,
+            'default' => $folderapi[0],
+            'options' => $this->folderapi(),
+            'label_block' => true,
+        ]);
+
+        $widget->add_control('SelectLeadType', [
+            'label' => __('Select LeadType', 'Genoo Elementor Extension'),
+            'type' => \Elementor\Controls_Manager::SELECT,
+            'options' => $this->getleadtypes(),
+            'default' => $getleadtypes[0],
+            'label_block' => true,
+            'separator' => 'before',
+        ]);
+
+        $widget->add_control('Createleadtype', [
+            'label' => __('Create lead type', 'Genoo Elementor Extension'),
+            'type' => \Elementor\Controls_Manager::RAW_HTML,
+            'raw' => __(
+                '<div class="leadtypecreate" name="leadtypecreate"><div><input name="createlead" id="createlead" class="createlead"  /></div><div><button type="button" class="btn btn-primary createleadsave">save</button></div>',
+                'Genoo Elementor Extension'
+            ),
+            'content_classes' => 'createleadtypesave',
+            'conditions' => [
+                'terms' => [
+                    [
+                        'name' => 'SelectLeadType',
+                        'operator' => '==',
+                        'value' => '2',
+                    ],
                 ],
-            ]
-        );
+            ],
+        ]);
 
-        $widget->add_control(
-            'SelectLeadFolder',
-            [
-                'label' => __( 'Select lead folder:', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SELECT,
-                'default' => $folderapi[0],
-                'options' =>  $this->folderapi(),
-                'label_block' => true,
-                'separator' => 'before',
+        $widget->add_control('labelemailfolderitem', [
+            'label' => __(
+                'Select Confirmation Email to Send Upon Form Completion (optional):',
+                'Genoo Elementor Extension'
+            ),
+            'type' => \Elementor\Controls_Manager::RAW_HTML,
+            'raw' => __('<div></div>'),
+            'content_classes' => 'html_email_folder_develop',
+        ]);
 
-            ]
-        );
+        $widget->add_control('SelectEmailfolder', [
+            'label' => __('Select Email Folder:', 'Genoo Elementor Extension'),
+            'type' => \Elementor\Controls_Manager::SELECT,
+            'options' => $this->getemailfolders(),
+            'default' => $getemailfolders[0],
+            'placeholder' => 'Select email folders',
+            'label_block' => true,
+        ]);
 
-        $widget->add_control(
-            'SelectLeadType',
-            [
-                'label' => __( 'Select LeadType (where leads will be put who submit this form):', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SELECT,
-                'options' =>  $this->getleadtypes(),
-                'default' =>  $getleadtypes[0],
-                'label_block' => true,
-                'separator' => 'before'
+        $widget->add_control('SelectEmail', [
+            'label' => __('Select Email to Send:', 'Genoo Elementor Extension'),
+            'type' => \Elementor\Controls_Manager::SELECT,
+            'options' => $this->datasuccess(),
+            'default' => $datasuccess[0],
+            'label_block' => true,
+            'required' => true,
+            'separator' => 'before',
 
-            ]
-        );
-
-        $widget->add_control(
-            'Createleadtype',
-            [
-                'label' => __( 'Create lead type', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::RAW_HTML,
-                'raw' => __( '<div class="leadtypecreate" name="leadtypecreate"><div><input name="createlead" id="createlead" class="createlead"  /></div><div><button type="button" class="btn btn-primary createleadsave">save</button></div>', 'Genoo Elementor Extension' ),
-                'content_classes' => 'createleadtypesave',
-                'conditions' => [
-                    'terms' => [
-                        [
-                            'name' => 'SelectLeadType',
-                            'operator' => '==',
-                            'value' => '2'
-                        ]
-
-                    ]
-
+            'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                    [
+                        'name' => 'SelectEmailfolder',
+                        'operator' => '!==',
+                        'value' => 0,
+                    ],
                 ],
-            ]
+            ],
+        ]);
 
-        );
+        $widget->add_control('show_title', [
+            'label_on' => __('Show', 'Genoo Elementor Extension'),
+            'label_off' => __('Hide', 'Genoo Elementor Extension'),
+            'label' => __(
+                'Register User into Webinar?',
+                'Genoo Elementor Extension'
+            ),
+            'type' => \Elementor\Controls_Manager::SWITCHER,
+            'classes' => 'selectwebinarval',
+            'return_value' => 'yes',
+            'default' => 'No',
+        ]);
 
-        $widget->add_control(
-            'SelectEmailfolder',
-            [
-                'label' => __( 'Select Email Folder:', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SELECT,
-                'options' =>  $this->getemailfolders(),
-                'default' => $getemailfolders[0],
-                'placeholder' => 'Select email folders',
-                'label_block' => true,
-                'separator' => 'before'
-
-            ]
-        );
-
-        $widget->add_control(
-            'SelectEmail',
-            [
-                'label' => __( 'Select Email to Send:', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SELECT,
-                'options' =>  $this->datasuccess(),
-                'default' => $datasuccess[0],
-                'label_block' => true,
-                'required' => true,
-                'separator' => 'before',
-
-                'conditions' => [
-                    'relation' => 'and',
-                    'terms' => [
-                        [
-                            'name' => 'SelectEmailfolder',
-                            'operator' => '!==',
-                            'value' => 0
-                        ]
-
-                    ]
-
-                ],
-
-            ]
-        );
-
-     
-
-        $widget->add_control(
-            'show_title',
-            [
-                'label_on' => __( 'Show', 'Genoo Elementor Extension' ),
-                'label_off' => __( 'Hide', 'Genoo Elementor Extension' ),
-                'label' => __( 'Register User into Webinar?', 'Genoo Elementor Extension' ),
-                'type' => \Elementor\Controls_Manager::SWITCHER,
-                'classes' => 'selectwebinarval',
-                'return_value' => 'yes',
-                'default' => 'No',
-            ] );
-
-            $widget->add_control(
-                'SelectWebinar',
-                [
-                    'label' => __( 'Select Webinar:', 'Genoo Elementor Extension' ),
-                    'type' => \Elementor\Controls_Manager::SELECT,
-                    'options' =>  $this->webinars(),
-                    'default' => $webinars[0],
-                    'placeholder' => 'Select Webinar',
-                    'label_block' => true,
-                    'separator' => 'before',
-                    'condition' => array(
-                        'show_title' => 'yes',
-                    ),
-
-                ]
-            );
+        $widget->add_control('SelectWebinar', [
+            'label' => __('Select Webinar:', 'Genoo Elementor Extension'),
+            'type' => \Elementor\Controls_Manager::SELECT,
+            'options' => $this->webinars(),
+            'default' => $webinars[0],
+            'placeholder' => 'Select Webinar',
+            'label_block' => true,
+            'separator' => 'before',
+            'condition' => [
+                'show_title' => 'yes',
+            ],
+        ]);
 
             $widget->end_controls_section();
 
@@ -583,10 +571,13 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                 $foldernames[-1] = 'Select lead folder';
                 $getfolders = $WPME_API->callCustom( '/listLeadTypeFolders/Uncategorized', 'GET', 'NULL' );
 
-                foreach ( $getfolders as $getfolder ):
-                  $foldernames[0] = 'Uncategorized';
-                  $foldernames[$getfolder->type_id] = $getfolder->name;
-
+                foreach ($getfolders as $getfolder):
+                    $foldernames[0] = 'Uncategorized';
+                    $foldernames[$getfolder->type_id] = $getfolder->name;
+                    foreach ($getfolder->child_folders as $child_folders):
+                        $foldernames[$child_folders->type_id] =
+                            $child_folders->name;
+                    endforeach;
                 endforeach;
 
             } catch( Exception $e ) {

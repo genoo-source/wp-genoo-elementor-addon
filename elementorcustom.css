@@ -9,3 +9,31 @@
     float: left;
     width: 100%;
 }
+.elementor-control-SelectEmailfolder .elementor-control-content .elementor-control-field label
+{
+  font-weight: bold;
+}
+.elementor-control-SelectLeadFolder .elementor-control-content .elementor-control-field label
+{
+  font-weight: bold;
+}
+.elementor-control-SelectLeadType .elementor-control-content .elementor-control-field label
+{
+  font-weight: bold;
+}
+.elementor-control-SelectEmail .elementor-control-content .elementor-control-field label
+{
+ font-weight: bold;
+}
+.elementor-control-SelectWebinar .elementor-control-content .elementor-control-field label
+{
+ font-weight: bold;
+}
+.elementor-control-labelemailfolderitem .elementor-control-content span
+{
+ font-weight: bold;
+}
+.elementor-control-labelleadtypeitem .elementor-control-content span
+{
+ font-weight: bold;
+}

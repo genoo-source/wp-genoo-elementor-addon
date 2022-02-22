@@ -19,57 +19,97 @@ class Elementor_Forms_Patterns_Validation {
         $elementor = \Elementor\Plugin::instance();
         $control_data = $elementor->controls_manager->get_control_from_stack( $element->get_name(), 'form_fields' );
 
-        if ( is_wp_error( $control_data ) ) {
+        if (is_wp_error($control_data)) {
             return;
         }
-        $map_fields = array_keys( $this->map_fields() );
+        $map_fields = array_keys($this->map_fields());
         // create a new class control as a repeater field
         $tmp = new Elementor\Repeater();
-        $tmp->add_control(
-            'third_party_input',
-            [
-                'name' => 'third_party_input',
-                'label' => 'Genoo/WPMktgEngine Field:',
-                'inner_tab' => 'form_fields_advanced_tab',
-                'tab' => 'content',
-                'tabs_wrapper' => 'form_fields_tabs',
-                'type' => 'select',
-                'options' => $this->map_fields(),
-                'default' => $map_fields[0],
-                'conditions' => [
-                    'relation' => 'and',
-                    'terms' => [
-                        [
-                            'name' => 'custom_id',
-                            'operator' => '!==',
-                            'value' => 'name'
-                        ],
-                        [
-                            'name' => 'custom_id',
-                            'operator' => '!==',
-                            'value' => 'email'
-                        ],
 
-                    ]
+        $tmp->add_control('third_party_input', [
+            'name' => 'third_party_input',
+            'label' => 'Genoo/WPMktgEngine Field:',
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => 'select',
+            'options' => $this->map_fields(),
+            'default' => $map_fields[0],
+            'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                    [
+                        'name' => 'custom_id',
+                        'operator' => '!==',
+                        'value' => 'name',
+                    ],
+                    [
+                        'name' => 'custom_id',
+                        'operator' => '!==',
+                        'value' => 'email',
+                    ],
                 ],
+            ],
+        ]);
+        $tmp->add_control('pre_mapped_name', [
+            'name' => 'pre_mapped_name',
+            'label' => 'Pre Mapped With',
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => 'text',
+            'value' => 'First Name',
 
-            ]
-        );
+            'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                    [
+                        'name' => 'custom_id',
+                        'operator' => '==',
+                        'value' => 'name',
+                    ],
+                ],
+            ],
+            'default' => 'First Name',
+        ]);
+        $tmp->add_control('pre_mapped_email', [
+            'name' => 'pre_mapped_email',
+            'label' => 'Pre Mapped With',
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => 'text',
+            'value' => 'First Name',
+
+            'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                    [
+                        'name' => 'custom_id',
+                        'operator' => '==',
+                        'value' => 'email',
+                    ],
+                ],
+            ],
+            'default' => 'Email',
+        ]);
 
         $pattern_field = $tmp->get_controls();
 
         $third_party_input = $pattern_field['third_party_input'];
+        $pre_mapped_email = $pattern_field['pre_mapped_email'];
 
+        $pre_mapped_name = $pattern_field['pre_mapped_name'];
         // insert new class field in advanced tab before field ID control
         $new_order = [];
-        foreach ( $control_data['fields'] as $field_key => $field ) {
-            if ( 'custom_id' === $field['name'] ) {
+        foreach ($control_data['fields'] as $field_key => $field) {
+            if ('custom_id' === $field['name']) {
                 $new_order['third_party_input'] = $third_party_input;
-
+                $new_order['pre_mapped_name'] = $pre_mapped_name;
+                $new_order['pre_mapped_email'] = $pre_mapped_email;
             }
 
-            $new_order[ $field_key ] = $field;
-
+            $new_order[$field_key] = $field;
         }
 
         $control_data['fields'] = $new_order;
@@ -108,7 +148,6 @@ class Elementor_Forms_Patterns_Validation {
 
         return $map_fields;
     }
-
 }
 new Elementor_Forms_Patterns_Validation();
 ?>
