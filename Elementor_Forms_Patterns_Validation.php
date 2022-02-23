@@ -53,12 +53,12 @@ class Elementor_Forms_Patterns_Validation {
         ]);
         $tmp->add_control('pre_mapped_name', [
             'name' => 'pre_mapped_name',
-            'label' => 'Pre Mapped With',
+            'label' => 'Genoo pre Mapped With',
             'inner_tab' => 'form_fields_advanced_tab',
             'tab' => 'content',
             'tabs_wrapper' => 'form_fields_tabs',
             'type' => 'text',
-            'value' => 'First Name',
+            'disabled' => true,
 
             'conditions' => [
                 'relation' => 'and',
@@ -74,12 +74,12 @@ class Elementor_Forms_Patterns_Validation {
         ]);
         $tmp->add_control('pre_mapped_email', [
             'name' => 'pre_mapped_email',
-            'label' => 'Pre Mapped With',
+            'label' => 'Genoo pre Mapped With',
             'inner_tab' => 'form_fields_advanced_tab',
             'tab' => 'content',
             'tabs_wrapper' => 'form_fields_tabs',
             'type' => 'text',
-            'value' => 'First Name',
+            'disabled' => true,
 
             'conditions' => [
                 'relation' => 'and',

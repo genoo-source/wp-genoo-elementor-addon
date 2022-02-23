@@ -37,3 +37,11 @@
 {
  font-weight: bold;
 }
+.elementor-control-pre_mapped_name .elementor-control-content
+{
+pointer-events: none;
+}
+.elementor-control-pre_mapped_email .elementor-control-content
+{
+pointer-events: none;
+}
