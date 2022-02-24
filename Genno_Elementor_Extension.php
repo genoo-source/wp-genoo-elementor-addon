@@ -696,6 +696,12 @@ final class Genoo_Elementor_Extension
             [],
             '1.0'
         );
+        wp_enqueue_style(
+            'my_custom_style',
+            plugin_dir_url(__FILE__) . 'elementorcustom.css',
+            [],
+            '1.0'
+        );
     }
     /**
      * Admin notice
