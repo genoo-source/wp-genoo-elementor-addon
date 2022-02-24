@@ -138,9 +138,10 @@ add_action(
         $select_lead_id = $settings['SelectLeadType'];
         $select_email_id = $settings['SelectEmail'];
         $select_webinar = $settings['SelectWebinar'];
+        $source_input = $settings['Source'];
         $page_url = get_permalink(get_the_ID());
 
-        if (!empty($select_lead_id)):
+        if (!empty($select_lead_id) && !empty($source_input)):
             $selectvalues = [];
             $selectvalues['form_name'] = $form_name;
             $selectvalues['lead_type_id'] = $select_lead_id;

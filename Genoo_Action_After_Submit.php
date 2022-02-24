@@ -77,8 +77,14 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         }
         // Make sure that there is a SelectEmail field ID
 
-        if ( empty( $settings['SelectEmail'] ) ) {
+        if (empty($settings['SelectEmail'])) {
+            return;
+        }
+        if (empty($settings['labelleadtypeitem'])) {
+            return;
+        }
 
+        if (empty($settings['labelleadtypeitem'])) {
             return;
         }
 
@@ -89,11 +95,15 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
         }
 
         // Make sure that there is a SelectLeadType field ID
-        if ( empty( $settings['SelectLeadType'] ) ) {
-
+        if (empty($settings['SelectLeadType'])) {
             return;
         }
-
+        if (empty($settings['Source'])) {
+            return;
+        }
+        if (empty($settings['labelemailfolderitem'])) {
+            return;
+        }
         // Make sure that there is a Createleadtype field ID
         if ( empty( $settings['Createleadtype'] ) ) {
 
@@ -193,6 +203,18 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                     ],
                 ],
             ],
+        ]);
+
+        $widget->add_control('Source', [
+            'label' => __(
+                'Source (set on lead record if this is a new lead):
+                ',
+                'Genoo Elementor Extension'
+            ),
+            'type' => \Elementor\Controls_Manager::TEXT,
+            'label_block' => true,
+            'placeholder' => 'enter source text here....',
+            'separator' => 'before',
         ]);
 
         $widget->add_control('labelemailfolderitem', [

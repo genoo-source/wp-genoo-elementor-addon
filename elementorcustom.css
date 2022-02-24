@@ -37,6 +37,10 @@
 {
  font-weight: bold;
 }
+.elementor-control-Source .elementor-control-content .elementor-control-field label
+{
+ font-weight: bold;
+}
 .elementor-control-pre_mapped_name .elementor-control-content
 {
 pointer-events: none;
