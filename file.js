@@ -1,5 +1,6 @@
 jQuery(document).on("ready", function () {
-  var lead_folder_id;
+ 
+  var lead_folder_ids;
   //function call for select leadtype on page load
   leadcreate();
   //leadfolder on change for show leadtypes.
@@ -7,7 +8,9 @@ jQuery(document).on("ready", function () {
     "change",
     ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
     function () {
-      lead_folder_id = jQuery(this).val();
+      lead_folder_ids = jQuery(this).val();
+      var lead_folder_id = lead_folder_ids.split('#')[0];
+
       jQuery.ajax({
         url: ajaxurl,
         type: "POST",
@@ -55,9 +58,11 @@ jQuery(document).on("ready", function () {
   jQuery(document).on("click", ".createleadsave", function (evt) {
     var lead = jQuery(".createlead").val();
     if (lead !== "") {
-      lead_folder_id = jQuery(
+      lead_folder_ids = jQuery(
         ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
       ).val();
+      var lead_folder_id = lead_folder_ids.split('#')[0];
+
       jQuery.ajax({
         url: ajaxurl,
         type: "POST",
