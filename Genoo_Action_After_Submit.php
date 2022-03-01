@@ -407,29 +407,28 @@ class Genoo_Action_After_Submit extends
                         $dataleadtypefolder =
                             $elements_value->settings->SelectLeadFolder;
 
-                        $dataleadtypefolders = substr(
+                        $dataleadtypefolders  = substr(
                             $dataleadtypefolder,
-                            0,
-                            strpos($dataleadtypefolder, '#')
+                            strpos($dataleadtypefolder, '#') + 1
                         );
 
+                      
+
                         if ($dataleadtypefolders == '') {
-                            $data_leadfolder_value = substr(
+                            $data_leadfolder_values = substr(
                                 $dataleadtypefolder,
                                 0,
                                 strpos($dataleadtypefolder, '#')
-                            );
-                        } else {
-                            $data_leadfolder_values = strstr(
-                                $dataleadtypefolder,
-                                '#'
                             );
                             $data_leadfolder_value = str_replace(
                                 '#',
                                 '',
                                 $data_leadfolder_values
                             );
+                        } else {
+                            $data_leadfolder_value = $dataleadtypefolders;
                         }
+                    
 
                         $dataleadtype =
                             $elements_value->settings->SelectLeadType;
