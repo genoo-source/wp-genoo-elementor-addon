@@ -9,15 +9,25 @@ jQuery(document).on("ready", function () {
     ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
     function () {
       lead_folder_ids = jQuery(this).val();
-      var lead_folder_id = lead_folder_ids.split('#')[0];
+      var lead_folder_id = lead_folder_ids.substr(lead_folder_ids.indexOf("#") + 1)
 
-      jQuery.ajax({
+      if(lead_folder_id=='')
+      {
+
+       var lead_folder_id_value =   lead_folder_ids.split('#')[0];
+
+      }
+      else{
+        var lead_folder_id_value =  lead_folder_id;
+      }
+
+    jQuery.ajax({
         url: ajaxurl,
         type: "POST",
         cache: false,
         data: {
           action: "sendleadfolder",
-          lead_folder_id: lead_folder_id
+          lead_folder_id: lead_folder_id_value
         },
         success: function (data) {
           jQuery(
@@ -61,8 +71,18 @@ jQuery(document).on("ready", function () {
       lead_folder_ids = jQuery(
         ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
       ).val();
-      var lead_folder_id = lead_folder_ids.split('#')[0];
+      lead_folder_ids = jQuery(this).val();
+      var lead_folder_id = lead_folder_ids.substr(lead_folder_ids.indexOf("#") + 1)
 
+      if(lead_folder_id=='')
+      {
+
+       var lead_folder_id_value =   lead_folder_ids.split('#')[0];
+
+      }
+      else{
+        var lead_folder_id_value =  lead_folder_id;
+      }
       jQuery.ajax({
         url: ajaxurl,
         type: "POST",
@@ -78,7 +98,7 @@ jQuery(document).on("ready", function () {
           system_ind: "no",
           blog_commenters: "no",
           blog_subscribers: "no",
-          folder_id: lead_folder_id
+          folder_id: lead_folder_id_value
         },
         success: function (data) {
           jQuery(
