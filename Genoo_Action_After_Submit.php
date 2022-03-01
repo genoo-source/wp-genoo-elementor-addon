@@ -169,13 +169,20 @@ class Genoo_Action_After_Submit extends
             'content_classes' => 'html_lead_type_develop',
         ]);
 
-        $widget->add_control('SelectLeadFolder', [
-            'label' => __('Select lead folder:', 'Genoo Elementor Extension'),
-            'type' => \Elementor\Controls_Manager::SELECT,
-            'default' => $folderapi[0],
-            'options' => $this->folderapi(),
-            'label_block' => true,
-        ]);
+        $widget->add_control(
+            'SelectLeadFolder',
+            [
+                'label' => __(
+                    'Select lead folder:',
+                    'Genoo Elementor Extension'
+                ),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => $folderapi[0],
+                'options' => $this->folderapi(),
+                'label_block' => true,
+            ],
+            ['orderby' => 'ASC']
+        );
 
         $widget->add_control('SelectLeadType', [
             'label' => __('Select LeadType', 'Genoo Elementor Extension'),
@@ -399,6 +406,31 @@ class Genoo_Action_After_Submit extends
                     foreach ($data_elements_value as $elements_value) {
                         $dataleadtypefolder =
                             $elements_value->settings->SelectLeadFolder;
+
+                        $dataleadtypefolders = substr(
+                            $dataleadtypefolder,
+                            0,
+                            strpos($dataleadtypefolder, '#')
+                        );
+
+                        if ($dataleadtypefolders == '') {
+                            $data_leadfolder_value = substr(
+                                $dataleadtypefolder,
+                                0,
+                                strpos($dataleadtypefolder, '#')
+                            );
+                        } else {
+                            $data_leadfolder_values = strstr(
+                                $dataleadtypefolder,
+                                '#'
+                            );
+                            $data_leadfolder_value = str_replace(
+                                '#',
+                                '',
+                                $data_leadfolder_values
+                            );
+                        }
+
                         $dataleadtype =
                             $elements_value->settings->SelectLeadType;
 
@@ -415,7 +447,7 @@ class Genoo_Action_After_Submit extends
                                 foreach ($leadTypes as $leadType):
                                     $leadtypes[2] = 'Create new lead type';
                                     if (
-                                        $dataleadtypefolder ==
+                                        $data_leadfolder_value ==
                                         $leadType->folder_id
                                     ):
                                         $leadtypes[$leadType->id] =
