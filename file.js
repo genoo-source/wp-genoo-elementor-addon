@@ -9,7 +9,7 @@ jQuery(document).on("ready", function () {
     ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
     function () {
       lead_folder_ids = jQuery(this).val();
-      var lead_folder_id = lead_folder_ids.substr(lead_folder_ids.indexOf("#") + 1)
+     var lead_folder_id = lead_folder_ids.substr(lead_folder_ids.indexOf("#") + 1);
 
       if(lead_folder_id=='')
       {
@@ -18,7 +18,7 @@ jQuery(document).on("ready", function () {
 
       }
       else{
-        var lead_folder_id_value =  lead_folder_id;
+        var lead_folder_id_value =  lead_folder_ids.substr(lead_folder_ids.indexOf("#") + 1);
       }
 
     jQuery.ajax({
