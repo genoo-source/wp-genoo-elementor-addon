@@ -148,6 +148,8 @@ add_action(
             $selectvalues['client_ip_address'] = $_SERVER['REMOTE_ADDR'];
             $selectvalues['page_url'] = $page_url;
             $selectvalues['form_type'] = 'EF';
+            $selectvalues['source'] = $source_input;
+
             if (!empty($select_email_id)):
                 $selectvalues['confirmation_email_id'] = $select_email_id;
             endif;

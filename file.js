@@ -118,7 +118,7 @@ jQuery(document).on("ready", function () {
 
         error: function (errorThrown) {
           console.log(errorThrown);
-        }
+        },
       });
     }
   });
@@ -284,7 +284,26 @@ jQuery(document).on(
     var getvalue = jQuery(
       ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
     ).val();
-    
+ 
+
+    var source_field = jQuery(
+      ".elementor-control-Source > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > input"
+    ).val();
+   if(source_field=='')
+   {
+    jQuery(".elementor-control-Source").css(
+      "border",
+      "2px solid red"
+    );
+    jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);
+    event.stopImmediatePropagation();
+    return false;
+    }
+    else{
+      jQuery(".elementor-control-Source").removeAttr("style");
+      jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
+    }
+
     if (getvalue == "" || getvalue == 0 || getvalue == 2) {
       jQuery(".elementor-control-SelectLeadType").css(
         "border",
