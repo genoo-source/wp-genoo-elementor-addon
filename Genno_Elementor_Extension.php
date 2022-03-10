@@ -21,11 +21,12 @@ if (!defined('ABSPATH')) {
 use Elementor\Plugin;
 
 require_once plugin_dir_path(__FILE__) . 'deploy/updater.php';
+require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 wpme_genno_elementor_updater_init(__FILE__);
 
 register_activation_hook(__FILE__, function () {
     // Basic extension data
-
+   global $wpdb;
     $fileFolder = basename(dirname(__FILE__));
     $file = basename(__FILE__);
     $filePlugin = $fileFolder . DIRECTORY_SEPARATOR . $file;
@@ -72,7 +73,18 @@ register_activation_hook(__FILE__, function () {
         $filePlugin,
         'This extension requires WPMktgEngine or Genoo plugin to work with.'
     );
-    } else {}
+    } else {
+
+        $sql = "CREATE TABLE {$wpdb->prefix}leadtype_form_save_elementor (
+            id mediumint(8) unsigned not null auto_increment,
+            post_id mediumint(8) unsigned not null,
+            is_active tinyint(1),
+            lead_values varchar(255),
+            lead_label  varchar(255),
+            PRIMARY KEY  (id))";
+       dbDelta($sql);
+
+   }
 });
 
 //add form,cta,survey widgets in elementor categories.
@@ -126,6 +138,94 @@ add_action('elementor_pro/init', function () {
         ->modules_manager->get_modules('forms')
         ->add_form_action($sendy_action->get_name(), $sendy_action);
 });
+
+add_filter(
+    'elementor_pro/forms/render/item/select',
+    function ($item, $index, $form) {
+        global $wpdb,$post;
+
+     
+
+        if ($item['third_party_input'] == 'leadtypes') {
+
+            $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+        
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+
+            foreach ($leadtypes as $leadtype) {
+            
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values\n"; 
+            }
+
+            $valuetests = implode(' ', $values);
+
+            $item['field_options'] = "Please select a value:|\n.$valuetests";
+            return $item;
+        }
+
+      
+    },
+    10,
+    3
+);
+
+add_filter(
+    'elementor_pro/forms/render/item/checkbox',
+    function ($item, $index, $form) {
+        global $wpdb,$post;
+
+     
+
+        if ($item['third_party_input'] == 'leadtypes') {
+
+            $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+        
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+
+            foreach ($leadtypes as $leadtype) {
+            
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values\n"; 
+            }
+
+            $valuetests = implode(' ', $values);
+
+            $item['field_options'] = "Please select a value:|\n.$valuetests";
+            return $item;
+        }
+
+    },
+    10,
+    3
+);
+add_filter(
+    'elementor_pro/forms/render/item/radio',
+    function ($item, $index, $form) {
+        global $wpdb,$post;
+
+     
+
+        if ($item['third_party_input'] == 'leadtypes') {
+
+            $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+        
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+
+            foreach ($leadtypes as $leadtype) {
+            
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values\n"; 
+            }
+
+            $valuetests = implode(' ', $values);
+
+            $item['field_options'] = "Please select a value:|\n.$valuetests";
+            return $item;
+        }
+
+    
+    },
+    10,
+    3
+);
 
 // formsubmit for lead
 add_action(
@@ -608,6 +708,14 @@ final class Genoo_Elementor_Extension
             [$this, 'adminEnqueueScripts'],
             10
         );
+        add_action('admin_init', [$this, 'adminEnqueueScripts'], 10);
+        add_action('wp_ajax_leadtype_elementor_savelist', [
+            $this,
+            'leadtype_elementor_savelist',
+        ]);
+
+     //   add_action('wp_ajax_leadtype_elementor_updatelist',[$this,'leadtype_elementor_updatelist']);
+        add_action('wp_ajax_get_leadtype_values',[$this,'get_leadtype_values']);
     }
 
     /**
@@ -706,6 +814,8 @@ final class Genoo_Elementor_Extension
             '1.0'
         );
     }
+
+  
     /**
      * Admin notice
      *
@@ -781,6 +891,27 @@ final class Genoo_Elementor_Extension
             '<div class="notice notice-warning is-dismissible"><p>%1$s</p></div>',
             $message
         );
+    }
+    public function leadtype_elementor_savelist()
+    {
+        global $wpdb;
+    
+        $checkboxdetails = $_REQUEST['check_after_Values'];
+
+        $post_id = $_REQUEST['post_id'];
+        $table = $wpdb->prefix . 'leadtype_form_save_elementor';
+        $wpdb->delete($table,['post_id' => $post_id]);
+
+    foreach ($checkboxdetails as $checkboxdetail) {
+         $wpdb->insert($table, [
+                'post_id' => $post_id,
+                'lead_values' => $checkboxdetail['labelvalue'],
+                'lead_label' => $checkboxdetail['label'],
+            ]); 
+   
+           
+        }
+       
     }
 
     /**

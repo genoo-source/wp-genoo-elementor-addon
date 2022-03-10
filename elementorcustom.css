@@ -49,3 +49,8 @@ pointer-events: none;
 {
 pointer-events: none;
 }
+.checkbox_values
+{
+overflow: auto !important;
+height: 300px !important;
+}
