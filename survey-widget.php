@@ -82,6 +82,8 @@ public static function getsurvey()
     new Surveys($repositorySettings)
     );
     $val= $repositorySurveys->getSurveysArrayTinyMCE();
+
+  
     $survey = array();
     foreach($val as $value)
     {
@@ -91,7 +93,7 @@ public static function getsurvey()
         }
         else
         {
-            $survey[$value['value']]=$value['label']; 
+            $survey[$value['value']]=$value['text']; 
         }
     } 
       
@@ -110,6 +112,8 @@ public static function getsurvey()
 protected function _register_controls() 
 {
     $getsurveyoption = array_keys($this->getsurvey());
+
+
     
     $this->start_controls_section(
         'content_section',
@@ -157,9 +161,16 @@ protected function render()
     $survey_list = $this->get_settings('survey_list');
     if($this->get_settings('survey_list') != '')
     {    
+        if(GENOO_SETUP)
+        {
+            $shortcodes = '[genooSurvey id="'.$survey_list.'"]';
+        }
+        else{
+         
         $shortcodes = '[WPMKTENGINESurvey id="'.$survey_list.'"]';
+        }
     }
-        $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
+        $shortcode = do_shortcode( shortcode_unautop($shortcodes));
         ?>
     <div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 <?php
