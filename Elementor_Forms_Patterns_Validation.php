@@ -162,34 +162,24 @@ class Elementor_Forms_Patterns_Validation
                 endif;
             }
         endif;
-        $i = 0;
+
         $lead_details =  $wpdb->get_results("select `lead_values` from $tablenames where `post_id`=$post->ID");
+
 
         foreach($lead_details as $lead_detail)
         {
-           $lead_array_values[] = $lead_detail->lead_values;
-        }
-       $lead_value_options ='<div class="checkbox_values">';
 
+             $lead_value_explode = $lead_detail->lead_values;
+
+        }
+
+        $lead_value_options ='<div class="checkbox_values">';
+       
         foreach ($leadTypes as $leadType) {
 
-       
-        if (in_array($leadType->id, $lead_array_values))
-        {
-
-      $lead_value_options.='<div><input type="checkbox" id="checkbox_values" value="'.$leadType->id.'" name="checkbox_values[]"
-         value="" checked /><label>'.$leadType->name.'</label></div>
-       ';
-        }
-        else{
-           
         $lead_value_options.='<div><input type="checkbox" id="checkbox_values" value="'.$leadType->id.'" name="checkbox_values[]"
-         value="" /><label>'.$leadType->name.'</label></div>
-       ';
-
-           $i++;
-
-        }
+            value=""checked; /><label>'.$leadType->name.'</label></div>';
+            
     }
 
         $lead_value_options.= '<button type="button" class="leadtypesave" name="leadtypesave">Save</button></div>';
@@ -198,77 +188,100 @@ class Elementor_Forms_Patterns_Validation
         
      
         $lead_value_after_save.='</div>';
+    
 
-            $tmp->add_control('checkbox_values',[
-                'inner_tab' => 'form_fields_advanced_tab',
-                'tab' => 'content',
-                'tabs_wrapper' => 'form_fields_tabs',
-                'type' => \Elementor\Controls_Manager::RAW_HTML,
-                'raw' => __(
-                   $lead_value_options,
-                    'Genoo Elementor Extension'
-                ),
-                'content_classes' => 'leadtype_options',
-                'condition' => [
-                    'third_party_input' => 'leadtypes',
-                ],
-            ]);
-            $tmp->add_control('checkbox_after_save_values',[
-                'inner_tab' => 'form_fields_advanced_tab',
-                'tab' => 'content',
-                'tabs_wrapper' => 'form_fields_tabs',
-                'type' => \Elementor\Controls_Manager::RAW_HTML,
-                'raw' => __(
-                   $lead_value_after_save,
-                    'Genoo Elementor Extension'
-                ),
-                'content_classes' => 'checkbox_after_save_values',
-                'condition' => [
-                    'third_party_input' => 'leadtypes',
-                ],
-            ]);
-            $tmp->add_control('post_values',[
-                'inner_tab' => 'form_fields_advanced_tab',
-                'tab' => 'content',
-                'tabs_wrapper' => 'form_fields_tabs',
-                'type' => \Elementor\Controls_Manager::HIDDEN,
-                'raw' => __(
-                   $lead_value_options,
-                    'Genoo Elementor Extension'
-                ),
-                'content_classes' => 'post_options',
-                'condition' => [
-                    'third_party_input' => 'leadtypes',
-                ],
-            ]);
+        $tmp->add_control('checkbox_values',[
+            'name' => 'checkbox_values',
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => \Elementor\Controls_Manager::RAW_HTML,
+            'raw' => __(
+               $lead_value_options,
+                'Genoo Elementor Extension'
+            ),
+            'content_classes' => 'leadtype_options',
+            'condition' => [
+                'third_party_input' => 'leadtypes',
+            ],
+        ]);
+        $tmp->add_control('checkbox_count_items',[
+            'name' => 'checkbox_count_items',
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => 'text',
+            'content_classes' => 'leadtype_options',
+            'condition' => [
+                'third_party_input' => 'leadtypes',
+            ],
+        ]);
+        $tmp->add_control('checkbox_after_save_values',[
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => \Elementor\Controls_Manager::RAW_HTML,
+            'raw' => __(
+               $lead_value_after_save,
+                'Genoo Elementor Extension'
+            ),
+            'content_classes' => 'checkbox_after_save_values',
+            'condition' => [
+                'third_party_input' => 'leadtypes',
+            ],
+        ]);
+       
+        $tmp->add_control(
+			'input_lead_values',
+			[
+                'name' => 'input_lead_values',
+				'label' => esc_html__( 'Update Value', 'Genoo elementor extention' ),
+				'type' => 'text',
+				'separator' => 'before',
+			   'classes' => 'lead_values',
+			]
+		);
+        $tmp->add_control(
+			'input_lead_labels',
+			[
+                'name' => 'input_lead_labels',
+				'label' => esc_html__( 'Update Label', 'Genoo elementor extention' ),
+				'type' => 'text',
+				'separator' => 'before',
+			   'classes' => 'lead_labels',
+			]
+		);
            
       
         $pattern_field = $tmp->get_controls();
 
-         
-          // insert new class field in advanced tab before field ID control
+       
+
+      // insert new class field in advanced tab before field ID control
             $new_order = [];
             foreach ($control_data['fields'] as $field_key => $field) {
+
+              
                 if ('custom_id' === $field['name']) {
                     $new_order['checkbox_values'] =  $pattern_field['checkbox_values'];
-                    $new_order['post_values'] = $pattern_field['post_values'];
-                    $new_order['checkbox_after_save_values'] = $pattern_field['checkbox_after_save_values'];
-                   // $new_order['post_values'] = $pattern_field['post_values'];
-                  /*  $new_order['post_values_leadtypes'] = $pattern_field['post_values_leadtypes'];
-                    $new_order['post_values_label'] = $pattern_field['post_values_label']; */
-                 
+                    $new_order['checkbox_after_save_values'] =  $pattern_field['checkbox_after_save_values'];
+                    $new_order['input_lead_values'] = $pattern_field['input_lead_values'];
+                    $new_order['input_lead_labels'] = $pattern_field['input_lead_labels'];
+                  
                 }
+               
 
                 $new_order[$field_key] = $field;
             }
-           
-
+                  
             $control_data['fields'] = $new_order;
-
+            
            $element->update_control('form_fields', $control_data);
       
       
     }
+
+ 
 
     //show leadfields for mapping
 
@@ -309,6 +322,10 @@ class Elementor_Forms_Patterns_Validation
 
         return $map_fields;
     }
+
+
+
+
 }
 new Elementor_Forms_Patterns_Validation();
 ?>
