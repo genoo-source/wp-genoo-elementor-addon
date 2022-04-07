@@ -387,8 +387,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
                     foreach ( $data_elements_value as $elements_value ) {
 
-                        $dataleadtypefolder = $elements_value->settings->SelectLeadFolder;
-                        $dataleadtype = $elements_value->settings->SelectLeadType;
+                        $dataleadtypefolder = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
+                        $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
 
                         if (method_exists($WPME_API, 'callCustom')):
                             try {
@@ -403,7 +403,7 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                                 foreach ($leadTypes as $leadType):
                                     $leadtypes[2] = 'Create new lead type';
                                     if (
-                                        $data_leadfolder_value ==
+                                        $dataleadtypefolder ==
                                         $leadType->folder_id
                                     ):
                                         $leadtypes[$leadType->id] =
@@ -501,8 +501,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                     // $customfields = '';
                     foreach ($data_element as $elements_value) {
                         $datavalue =
-                            $elements_value->settings->SelectEmailfolder;
-                        $dataemail = $elements_value->settings->SelectEmail;
+                            isset($elements_value->settings->SelectEmailfolder) ? $elements_value->settings->SelectEmailfolder : '';
+                        $dataemail = isset($elements_value->settings->SelectEmail) ? $elements_value->settings->SelectEmail : '';
                         //calling leadfields api for showing dropdown
                         if (method_exists($WPME_API, 'callCustom')):
                             $email_values[0] = 'Select email';
