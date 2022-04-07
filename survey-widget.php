@@ -91,7 +91,7 @@ public static function getsurvey()
         }
         else
         {
-            $survey[$value['value']]=$value['label']; 
+            $survey[$value['value']]=$value['text']; 
         }
     } 
       

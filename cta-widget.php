@@ -196,13 +196,13 @@ protected function render()
     if($this->get_settings('CTA') != '')
     {    
     $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$Align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
-    }
+  
     $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
 	?>
 	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 <?php
 }
 
-
+}
 }
  
