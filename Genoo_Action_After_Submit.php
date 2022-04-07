@@ -26,8 +26,8 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
     public function __construct() {
         //get email data while select email folders
-        add_action( 'wp_ajax_emaildata', array( $this, 'emaildata' ) );
-        add_action( 'elementor/action_after_submit/before_save', $this, $data );
+        add_action('wp_ajax_emaildata', [$this, 'emaildata']);
+        
         //save leadtype when user selects create leadtype
         add_action( 'wp_ajax_btnleadsave', array( $this, 'btnleadsave' ) );
         //get leadtypes id form leadfolder by using particular leadfolderid 
@@ -277,83 +277,98 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
 
         //function for geting leadtypes based on lead folderid
 
-        public function sendleadfolder() {
-            global $WPME_API;
+    public function sendleadfolder()
+    {
+        global $WPME_API;
 
-            $lead_id = $_REQUEST['lead_folder_id'];
+        $lead_id = $_REQUEST['lead_folder_id'];
 
-            //getting api response for leadtypes.
-            if ( method_exists( $WPME_API, 'callCustom' ) ):
+        //getting api response for leadtypes.
+        if (method_exists($WPME_API, 'callCustom')):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                foreach ( $leadTypes as $leadType ):
                 $leadtypes[0] = 'Select Lead Types';
                 $leadtypes[1] = '---------------------------------';
                 $leadtypes[2] = 'Create new lead type';
-                if ( $leadType->folder_id == $lead_id ):
-                $leadtypes[$leadType->id] = $leadType->name;
-                endif;
+                $leadTypes = $WPME_API->callCustom('/leadtypes', 'GET', null);
+                foreach ($leadTypes as $leadType):
+                    if ($leadType->folder_id == $lead_id):
+                        $leadtypes[$leadType->id] = $leadType->name;
+                    endif;
                 endforeach;
-                wp_send_json( $leadtypes );
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like folders not found
+                wp_send_json($leadtypes);
+            } catch (Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
 
+
+                    // Looks like folders not found
                 endif;
             }
-            endif;
+        endif;
+    }
+    //function for getting email folders
+    public static function getemailfolders()
+    {
+        global $WPME_API;
+        //getting api response for leadtypes, zoomwebinars, emailfolders
 
-        }
-        //function for getting email folders
-        public static function getemailfolders() {
-            global $WPME_API;
-            //getting api response for leadtypes, zoomwebinars, emailfolders
-            if ( method_exists( $WPME_API, 'callCustom' ) ):
+        if (method_exists($WPME_API, 'callCustom')):
             try {
-                // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $emailfolders = $WPME_API->callCustom( '/emailfolders', 'GET', NULL );
-                foreach ( $emailfolders as $emailfolder ):
                 $emailfolderslead[0] = 'Select Email Folders';
-                $emailfolderslead[$emailfolder->id] = $emailfolder->name;
-                endforeach;
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like folders not found
-
-                endif;
-            }
-            endif;
-            return $emailfolderslead;
-
-        }
-        //function for getting webinars.
-        public static function webinars() {
-
-            global $WPME_API;
-            //getting api response for leadtypes, zoomwebinars, emailfolders
-            if ( method_exists( $WPME_API, 'callCustom' ) ):
-            try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $zoomwebinars = $WPME_API->callCustom( '/zoomwebinars/all', 'GET', NULL );
-
-                foreach ( $zoomwebinars as $zoomwebinar ):
-                $zoomwebinarslead[0] = 'Select webinars';
-                $zoomwebinarslead[$zoomwebinar->id] = $zoomwebinar->startdate .' ::'.$zoomwebinar->name;
+                $emailfolders = $WPME_API->callCustom(
+                    '/emailfolders',
+                    'GET',
+                    null
+                );
+                foreach ($emailfolders as $emailfolder):
+                    $emailfolderslead[$emailfolder->id] = $emailfolder->name;
                 endforeach;
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like folders not found
-
+            } catch (Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                    // Looks like folders not found
+                    $emailfolderslead[0] = 'Select Email Folders';
                 endif;
             }
-            endif;
+        endif;
+        return $emailfolderslead;
+    }
+    //function for getting webinars.
+    public static function webinars()
+    {
+        global $WPME_API;
+        //getting api response for leadtypes, zoomwebinars, emailfolders
 
-            return $zoomwebinarslead;
+        if (method_exists($WPME_API, 'callCustom')):
+            try {
+                $zoomwebinarslead[0] = 'Select webinars';
+                // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                $zoomwebinars = $WPME_API->callCustom(
+                    '/zoomwebinars/all',
+                    'GET',
+                    null
+                );
 
-        }
+                if (is_array($zoomwebinars) || is_object($zoomwebinars)) {
+                    foreach ($zoomwebinars as $zoomwebinar):
+                        $zoomwebinarslead[$zoomwebinar->id] =
+                            $zoomwebinar->startdate .
+                            ' ::' .
+                            $zoomwebinar->name;
+                    endforeach;
+                }
+            } catch (Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                    // Looks like folders not found
+                    $zoomwebinarslead[0] = 'Select webinars';
+                endif;
+            }
+        endif;
 
-        //function for getting leadtypes
+        return $zoomwebinarslead;
+    }
+
+    //function for getting leadtypes
 
         public static function getleadtypes() {
             global $WPME_API, $post;
@@ -375,163 +390,176 @@ class Genoo_Action_After_Submit extends \ElementorPro\Modules\Forms\Classes\Acti
                         $dataleadtypefolder = $elements_value->settings->SelectLeadFolder;
                         $dataleadtype = $elements_value->settings->SelectLeadType;
 
-                        if ( method_exists( $WPME_API, 'callCustom' ) ):
-                        try {
-                            // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                            $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                            foreach ( $leadTypes as $leadType ):
-
-                            $leadtypes[0] = 'Select Lead Types';
-                            $leadtypes[1] = '------------------';
-                            $leadtypes[2] = 'Create new lead type';
-                            if ( $dataleadtypefolder == $leadType->folder_id ):
-                            $leadtypes[$leadType->id] = $leadType->name;
-                            endif;
-                            endforeach;
-                        } catch( Exception $e ) {
-                            if ( $WPME_API->http->getResponseCode() == 404 ):
-                            // Looks like folders not found
-
-                            endif;
-                        }
+                        if (method_exists($WPME_API, 'callCustom')):
+                            try {
+                                // Make a GET request, to Genoo / WPME api, for that rest endpoint
+                                $leadtypes[0] = 'Select Lead Types';
+                                $leadtypes[1] = '------------------';
+                                $leadTypes = $WPME_API->callCustom(
+                                    '/leadtypes',
+                                    'GET',
+                                    null
+                                );
+                                foreach ($leadTypes as $leadType):
+                                    $leadtypes[2] = 'Create new lead type';
+                                    if (
+                                        $data_leadfolder_value ==
+                                        $leadType->folder_id
+                                    ):
+                                        $leadtypes[$leadType->id] =
+                                            $leadType->name;
+                                    endif;
+                                endforeach;
+                            } catch (Exception $e) {
+                                if ($WPME_API->http->getResponseCode() == 404):
+                                    // Looks like folders not found
+                                    $leadtypes[0] = 'Select Lead Types';
+                                    $leadtypes[1] = '------------------';
+                                endif;
+                            }
                         endif;
                     }
                 }
-            } else:
-
-            if ( method_exists( $WPME_API, 'callCustom' ) ):
-
-            try {
-                // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                $leadTypes = $WPME_API->callCustom( '/leadtypes', 'GET', NULL );
-                foreach ( $leadTypes as $leadType ):
-                $leadtypes[0] = 'Select Lead Types';
-                $leadtypes[1] = '------------------';
-                $leadtypes[2] = 'Create new lead type';
-                $leadtypes[$leadType->id] = $leadType->name;
-                endforeach;
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like folders not found
-
-                endif;
             }
+            // Make a GET request, to Genoo / WPME api, for that rest endpoint
+            // Looks like folders not found
+        else:
+            if (method_exists($WPME_API, 'callCustom')):
+                try {
+                    $leadtypes[0] = 'Select Lead Types';
+                    $leadtypes[1] = '------------------';
+                    $leadTypes = $WPME_API->callCustom(
+                        '/leadtypes',
+                        'GET',
+                        null
+                    );
+                    foreach ($leadTypes as $leadType):
+                        $leadtypes[2] = 'Create new lead type';
+                        $leadtypes[$leadType->id] = $leadType->name;
+                    endforeach;
+                } catch (Exception $e) {
+                    if ($WPME_API->http->getResponseCode() == 404):
+                        $leadtypes[0] = 'Select Lead Types';
+                        $leadtypes[1] = '------------------';
+                    endif;
+                }
             endif;
-
             endif;
             return $leadtypes;
 
         }
         //function for getting emails based on emailfolderid
 
-        public function emaildata() {
-            global $WPME_API;
+    public function emaildata()
+    {
+        global $WPME_API;
 
-            $id = $_REQUEST['selectid'];
+        $id = $_REQUEST['selectid'];
 
             //getting api response for email.
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
-                if ( $id != 0 ):
-                $email_datas = $WPME_API->callCustom( '/emails/' . $id, 'GET', NULL );
-                else:
-                $email_datas = $WPME_API->getEmails();
-                endif;
-                foreach ( $email_datas as $email_data ):
-                $emailtypes[$email_data->id] = $email_data->name;
-                endforeach;
-                wp_send_json( $emailtypes );
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like folders not found
 
+                if ($id != 0):
+                    $email_datas = $WPME_API->callCustom(
+                        '/emails/' . $id,
+                        'GET',
+                        null
+                    );
+                else:
+                    $email_datas = $WPME_API->getEmails();
+                endif;
+                foreach ($email_datas as $email_data):
+                    $emailtypes[$email_data->id] = $email_data->name;
+                endforeach;
+                wp_send_json($emailtypes);
+            } catch (Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+
+
+                    // Looks like folders not found
                 endif;
             }
-            endif;
+        endif;
+    }
 
-        }
+    //getting emails if email id already present in database
 
-        //getting emails if email id already present in database
+    public function datasuccess()
+    {
+        global $post, $WPME_API;
 
-        public function datasuccess() {
-            global $post, $WPME_API;
-
-            $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
-            if ( !empty( $elementor_data ) ):
-            $decode_datas = json_decode( $elementor_data );
-            foreach ( $decode_datas as $decode_data ) {
+        $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
+        if (!empty($elementor_data)):
+            $decode_datas = json_decode($elementor_data);
+            foreach ($decode_datas as $decode_data) {
                 $data = $decode_data->elements;
 
-                foreach ( $data as $dataelement ) {
-
+                foreach ($data as $dataelement) {
                     $data_element = $dataelement->elements;
                     // $customfields = '';
-                    foreach ( $data_element as $elements_value ) {
-
-                        $datavalue = $elements_value->settings->SelectEmailfolder;
+                    foreach ($data_element as $elements_value) {
+                        $datavalue =
+                            $elements_value->settings->SelectEmailfolder;
                         $dataemail = $elements_value->settings->SelectEmail;
                         //calling leadfields api for showing dropdown
-                        if ( method_exists( $WPME_API, 'callCustom' ) ):
-                        try {
-                            if ( $datavalue != 0 ):
-                            $customfields = $WPME_API->callCustom( '/emails/'.$datavalue, 'GET', NULL );
-                            foreach ( $customfields as $customfield ):
+                        if (method_exists($WPME_API, 'callCustom')):
                             $email_values[0] = 'Select email';
-                            $email_values[$customfield->id] = $customfield->name;
-                            endforeach;
-
-                            endif;
-                            //$email_values = array();
-
-                        } catch( Exception $e ) {
-                            if ( $WPME_API->http->getResponseCode() == 404 ):
-                            // Looks like leadfields not found
-
-                            endif;
-                        }
-
+                            try {
+                                if ($datavalue != 0):
+                                    $customfields = $WPME_API->callCustom(
+                                        '/emails/' . $datavalue,
+                                        'GET',
+                                        null
+                                    );
+                                    foreach ($customfields as $customfield):
+                                        $email_values[$customfield->id] =
+                                            $customfield->name;
+                                    endforeach;
+                                endif;
+                                //$email_values = array();
+                            } catch (Exception $e) {
+                                if ($WPME_API->http->getResponseCode() == 404):
+                                    // Looks like leadfields not found
+                                    $email_values[0] = 'Select email';
+                                endif;
+                            }
                         endif;
-
                     }
-
                 }
-            } else:
-
-            if ( method_exists( $WPME_API, 'callCustom' ) ):
-            try {
-
-                $customfields = $WPME_API->getEmails();
-
-                //$email_values = array();
-                foreach ( $customfields as $customfield ):
-                $email_values[0] = 'Select email';
-                $email_values[$customfield->id] = $customfield->name;
-                endforeach;
-
-            } catch( Exception $e ) {
-                if ( $WPME_API->http->getResponseCode() == 404 ):
-                // Looks like leadfields not found
-
-                endif;
             }
 
+            //$email_values = array();
+            // Looks like leadfields not found
+        else:
+            if (method_exists($WPME_API, 'callCustom')):
+                try {
+                    $email_values[0] = 'Select email';
+                    $customfields = $WPME_API->getEmails();
+
+                    foreach ($customfields as $customfield):
+                        $email_values[$customfield->id] = $customfield->name;
+                    endforeach;
+                } catch (Exception $e) {
+                    if ($WPME_API->http->getResponseCode() == 404):
+                        $email_values[0] = 'Select email';
+                    endif;
+                }
             endif;
+        endif;
 
-            endif;
+        return $email_values;
+    }
 
-            return $email_values;
-
-        }
-
-        /**
-        * On Export
-        *
-        * Clears form settings on export
-        * @access Public
-        * @param array $element
-        */
-        //function for create new lead type
+    /**
+     * On Export
+     *
+     * Clears form settings on export
+     * @access Public
+     * @param array $element
+     */
+    //function for create new lead type
 
         public function btnleadsave() {
 
