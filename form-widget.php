@@ -77,9 +77,9 @@ public function get_categories()
      //get form options
 public function getformoption()
 {
-    $cache = $cache ? $cache : new \WPME\CacheFactory(WPMKTENGINE_CACHE);
+    $cache = isset($cache) ? $cache : new \WPME\CacheFactory(WPMKTENGINE_CACHE);
     $repositarySettings = new RepositorySettingsFactory();
-    $api = $api ? $api : new \WPME\ApiFactory($repositarySettings);
+    $api = isset($api) ? $api : new \WPME\ApiFactory($repositarySettings);
     $repositaryForms = new RepositoryForms($cache, $api);
     $formvalue = $repositaryForms->getFormsArrayTinyMCE();
     $form_option=array();
