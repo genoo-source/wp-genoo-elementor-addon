@@ -29,7 +29,7 @@ class Genoo_Action_After_Submit extends
     {
         //get email data while select email folders
         add_action('wp_ajax_emaildata', [$this, 'emaildata']);
-        add_action('elementor/action_after_submit/before_save', $this, $data);
+        
         //save leadtype when user selects create leadtype
         add_action('wp_ajax_btnleadsave', [$this, 'btnleadsave']);
         //get leadtypes id form leadfolder by using particular leadfolderid
@@ -403,35 +403,10 @@ class Genoo_Action_After_Submit extends
                 foreach ($data as $dataelement) {
                     $data_elements_value = $dataelement->elements;
 
-                    foreach ($data_elements_value as $elements_value) {
-                        $dataleadtypefolder =
-                            $elements_value->settings->SelectLeadFolder;
+                    foreach ( $data_elements_value as $elements_value ) {
 
-                        $dataleadtypefolders  = substr(
-                            $dataleadtypefolder,
-                            strpos($dataleadtypefolder, '#') + 1
-                        );
-
-                      
-
-                        if ($dataleadtypefolders == '') {
-                            $data_leadfolder_values = substr(
-                                $dataleadtypefolder,
-                                0,
-                                strpos($dataleadtypefolder, '#')
-                            );
-                            $data_leadfolder_value = str_replace(
-                                '#',
-                                '',
-                                $data_leadfolder_values
-                            );
-                        } else {
-                            $data_leadfolder_value = $dataleadtypefolders;
-                        }
-                    
-
-                        $dataleadtype =
-                            $elements_value->settings->SelectLeadType;
+                        $dataleadtypefolder = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
+                        $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
 
                         if (method_exists($WPME_API, 'callCustom')):
                             try {
@@ -446,7 +421,7 @@ class Genoo_Action_After_Submit extends
                                 foreach ($leadTypes as $leadType):
                                     $leadtypes[2] = 'Create new lead type';
                                     if (
-                                        $data_leadfolder_value ==
+                                        $dataleadtypefolder ==
                                         $leadType->folder_id
                                     ):
                                         $leadtypes[$leadType->id] =
@@ -543,8 +518,8 @@ class Genoo_Action_After_Submit extends
                     // $customfields = '';
                     foreach ($data_element as $elements_value) {
                         $datavalue =
-                            $elements_value->settings->SelectEmailfolder;
-                        $dataemail = $elements_value->settings->SelectEmail;
+                            isset($elements_value->settings->SelectEmailfolder) ? $elements_value->settings->SelectEmailfolder : '';
+                        $dataemail = isset($elements_value->settings->SelectEmail) ? $elements_value->settings->SelectEmail : '';
                         //calling leadfields api for showing dropdown
                         if (method_exists($WPME_API, 'callCustom')):
                             $email_values[0] = 'Select email';

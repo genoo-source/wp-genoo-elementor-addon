@@ -142,15 +142,17 @@ add_action('elementor_pro/init', function () {
 add_filter(
     'elementor_pro/forms/render/item/select',
     function ($item, $index, $form) {
+
         global $wpdb,$post;
 
-     
-
-        if ($item['third_party_input'] == 'leadtypes') {
+      if ($item['third_party_input'] == 'leadtypes') {
 
             $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
         
             $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+
+            $values = array();
+
 
             foreach ($leadtypes as $leadtype) {
             
@@ -177,8 +179,10 @@ add_filter(
      
 
         if ($item['third_party_input'] == 'leadtypes') {
+           
+            $values = array();
 
-            $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+         $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
         
             $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
 
@@ -202,10 +206,10 @@ add_filter(
     function ($item, $index, $form) {
         global $wpdb,$post;
 
-     
-
-        if ($item['third_party_input'] == 'leadtypes') {
-
+      if ($item['third_party_input'] == 'leadtypes') {
+          
+            $values = array();
+           
             $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
         
             $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
