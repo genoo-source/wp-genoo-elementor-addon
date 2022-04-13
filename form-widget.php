@@ -77,9 +77,9 @@ public function get_categories()
      //get form options
 public function getformoption()
 {
-    $cache = $cache ? $cache : new \WPME\CacheFactory(WPMKTENGINE_CACHE);
+    $cache = isset($cache) ? $cache : new \WPME\CacheFactory(WPMKTENGINE_CACHE);
     $repositarySettings = new RepositorySettingsFactory();
-    $api = $api ? $api : new \WPME\ApiFactory($repositarySettings);
+    $api = isset($api) ? $api : new \WPME\ApiFactory($repositarySettings);
     $repositaryForms = new RepositoryForms($cache, $api);
     $formvalue = $repositaryForms->getFormsArrayTinyMCE();
     $form_option=array();
@@ -202,6 +202,9 @@ protected function render()
     $theme = $this->get_settings('Style');
         
     $html_checkbox =   $this->get_settings('Checkbox');
+
+   
+
         
     if ( 'yes' === $settings['show_title'] ) {
 		$confirmation = "true";
@@ -209,7 +212,9 @@ protected function render()
         $error_message =  $this->get_settings('error_message');
 		}
 	else {
-		$confirmation = "false";   
+		$confirmation = "false"; 
+	        $success_message = '';
+	        $error_message = '';  
 	}
        
    if($this->get_settings('form_list') != '')

@@ -180,7 +180,7 @@ protected function render()
 {
     $settings = $this->get_settings_for_display();
     $cta_list = $this->get_settings('CTA');
-    $Align = $this->get_settings('Align');
+    $align = $this->get_settings('Align');
     $cta_checkbox = $this->get_settings( 'Cta_checkbox' );
         
     if ( 'yes' === $settings['show_title']) 
@@ -195,14 +195,14 @@ protected function render()
         
     if($this->get_settings('CTA') != '')
     {    
-    $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$Align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
-    }
+    $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
+  
     $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
 	?>
 	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 <?php
 }
 
-
+}
 }
  
