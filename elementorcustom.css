@@ -54,3 +54,19 @@ pointer-events: none;
 overflow: auto !important;
 height: 300px !important;
 }
+.elementor-repeater-fields .elementor-repeater-row-controls.editable {
+	float: left;
+	width: 100%;
+	max-height: 350px;
+	overflow: auto;
+}
+.lead_calss
+{
+  margin: 0px 0px 12px 0px;
+}
+.elementorlabeledit
+{
+font-size: 16px !important;
+font-weight: 500 !important;
+margin: 0px 0px 12px 0px;
+}

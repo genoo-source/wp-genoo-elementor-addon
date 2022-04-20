@@ -393,14 +393,15 @@ class Genoo_Action_After_Submit extends
         global $WPME_API, $post;
         //getting api response for leadtypes,
 
-        $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
-        if (!empty($elementor_data)):
-            $decode_datas = json_decode($elementor_data);
+            $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
+            if ( !empty( $elementor_data ) ):
+            $decode_datas = json_decode( $elementor_data );
 
-            foreach ($decode_datas as $decode_data) {
+            foreach ( $decode_datas as $decode_data ) {
                 $data = $decode_data->elements;
 
-                foreach ($data as $dataelement) {
+                foreach ( $data as $dataelement ) {
+
                     $data_elements_value = $dataelement->elements;
 
                     foreach ( $data_elements_value as $elements_value ) {
@@ -462,10 +463,11 @@ class Genoo_Action_After_Submit extends
                     endif;
                 }
             endif;
-        endif;
-        return $leadtypes;
-    }
-    //function for getting emails based on emailfolderid
+            endif;
+            return $leadtypes;
+
+        }
+        //function for getting emails based on emailfolderid
 
     public function emaildata()
     {
@@ -473,8 +475,8 @@ class Genoo_Action_After_Submit extends
 
         $id = $_REQUEST['selectid'];
 
-        //getting api response for email.
-        if (method_exists($WPME_API, 'callCustom')):
+            //getting api response for email.
+            if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
 
@@ -578,22 +580,22 @@ class Genoo_Action_After_Submit extends
      */
     //function for create new lead type
 
-    public function btnleadsave()
-    {
-        global $WPME_API;
-        $createlead = [];
-        $createlead['name'] = $_REQUEST['leadtypevalue'];
-        $createlead['description'] = $_REQUEST['description'];
-        $createlead['mngdlistind'] = $_REQUEST['mngdlistind'];
-        $createlead['costforall'] = $_REQUEST['costforall'];
-        $createlead['costperlead'] = $_REQUEST['costperlead'];
-        $createlead['sales_ind'] = $_REQUEST['sales_ind'];
-        $createlead['system_ind'] = $_REQUEST['system_ind'];
-        $createlead['blog_commenters'] = $_REQUEST['blog_commenters'];
-        $createlead['blog_subscribers'] = $_REQUEST['blog_subscribers'];
-        $createlead['folder_id'] = $_REQUEST['folder_id'];
+        public function btnleadsave() {
 
-        if (method_exists($WPME_API, 'callCustom')):
+            global $WPME_API;
+            $createlead = array();
+            $createlead['name'] = $_REQUEST['leadtypevalue'];
+            $createlead['description'] = $_REQUEST['description'];
+            $createlead['mngdlistind'] = $_REQUEST['mngdlistind'];
+            $createlead['costforall'] =  $_REQUEST['costforall'];
+            $createlead['costperlead'] = $_REQUEST['costperlead'];
+            $createlead['sales_ind'] =   $_REQUEST['sales_ind'];
+            $createlead['system_ind'] = $_REQUEST['system_ind'];
+            $createlead['blog_commenters'] = $_REQUEST['blog_commenters'];
+            $createlead['blog_subscribers'] = $_REQUEST['blog_subscribers'];
+            $createlead['folder_id'] = $_REQUEST['folder_id'];
+
+            if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 $leadresponse = $WPME_API->callCustom(
                     '/createLeadType',

@@ -180,7 +180,7 @@ protected function render()
 {
     $settings = $this->get_settings_for_display();
     $cta_list = $this->get_settings('CTA');
-    $Align = $this->get_settings('Align');
+    $align = $this->get_settings('Align');
     $cta_checkbox = $this->get_settings( 'Cta_checkbox' );
         
     if ( 'yes' === $settings['show_title']) 
@@ -197,12 +197,12 @@ protected function render()
     {    
         if(GENOO_SETUP)
         {
-            $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$Align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]'; '';
+            $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]'; '';
         }
         else{
-           $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$Align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
+           $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
         }
-        }
+        
          
    
     
@@ -211,7 +211,6 @@ protected function render()
 	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 <?php
 }
-
-
+}
 }
  

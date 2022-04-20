@@ -202,6 +202,9 @@ protected function render()
     $theme = $this->get_settings('Style');
         
     $html_checkbox =   $this->get_settings('Checkbox');
+
+   
+
         
     if ( 'yes' === $settings['show_title'] ) {
 		$confirmation = "true";
@@ -209,7 +212,9 @@ protected function render()
         $error_message =  $this->get_settings('error_message');
 		}
 	else {
-		$confirmation = "false";   
+		$confirmation = "false"; 
+	        $success_message = '';
+	        $error_message = '';  
 	}
        
    if($this->get_settings('form_list') != '')

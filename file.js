@@ -1,200 +1,386 @@
 jQuery(document).on("ready", function () {
+
   var lead_folder_ids;
+
 //function call for select leadtype on page load
+
   leadcreate();
+
   //leadfolder on change for show leadtypes.
+
   jQuery(document).on(
+
     "change",
+
     ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
+
     function () {
+
       
+
       lead_folder_ids = jQuery(this).val();
+
       var lead_folder_id = lead_folder_ids.substr(
+
         lead_folder_ids.indexOf("#") + 1
+
       );
 
+
+
       if (lead_folder_id == "") {
+
         var lead_folder_id_value = lead_folder_ids.split("#")[0];
+
       } else {
+
         var lead_folder_id_value = lead_folder_ids.substr(
+
           lead_folder_ids.indexOf("#") + 1
+
         );
+
       }
 
+
+
       jQuery.ajax({
+
         url: ajaxurl,
+
         type: "POST",
+
         cache: false,
+
         data: {
+
           action: "sendleadfolder",
+
           lead_folder_id: lead_folder_id_value,
+
         },
+
         success: function (data) {
+
           jQuery(
+
             ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
+
           ).empty("");
+
           jQuery.each(data, function (key, value) {
+
             jQuery(
+
               ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
+
             ).append('<option value="' + key + '">' + value + " </option>");
+
           });
 
+
+
           var leadtype = jQuery(
+
             ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
+
           ).val();
 
+
+
           if (leadtype == "" || leadtype == 0 || leadtype == 2) {
+
             jQuery(".elementor-control-SelectLeadType").css(
+
               "border",
+
               "2px solid red"
+
             );
+
             jQuery("#elementor-panel-saver-button-publish").attr(
+
               "disabled",
+
               true
+
             );
+
             return false;
+
           } else {
+
             jQuery("#elementor-panel-saver-button-publish").attr(
+
               "disabled",
+
               false
+
             );
+
           }
+
         }
+
       });
+
     }
+
   );
 
+
+
   //onclick function for create new leadtype api call.
-  jQuery(document).on("click", ".leadtypesave", function (evt) {
-    jQuery(".checkbox_values").css("display","none");
-    var checkboxes = [];
 
-  // var itemid =  jQuery(
-    //  ".elementor-control-control-custom_id > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > input"
-   // ).val();
 
-    //alert(itemid);
-   
-    jQuery('.checkbox_values > div > input[type="checkbox"]:checked').each(function() {
-   
-  var data_Value = {};
-    var data = jQuery(this).next();
+
+  jQuery(document).on("click", ".saveitemsleadtypeidset", function (evt) {
+
+
+          var checkboxes = [];
+
+          var objectvalue = jQuery(this).closest('.elementor-repeater-fields');
+
+
+          var parentDiv=jQuery(objectvalue);
+
+
+         jQuery('.lead_value_after_save').css('display','block');
+
+         parentDiv.find(".elementor-control-type-switcher .elementor-switch-input:checked").each(function(){
+
+          
+
+            var data_value = {};
+
         
-         data_Value.label = data.html();
-         data_Value.labelvalue =  jQuery(this).val(); 
-         checkboxes[[jQuery(this).val()]] =  data_Value;
-    });
-   
+
+        var object = jQuery(this).closest('.elementor-control-content');
+
+    
+
+     var item_id = jQuery(object).find('.elementor-control-field'); 
+
+     
+
+      var getlabelvalue = jQuery(object).find('.elementor-control-title').html(); 
+
+      var datasetting = jQuery(this).attr("data-setting");
+      
+      var myString = datasetting.substr(datasetting.indexOf("-") + 1)
 
 
+      data_value.label = getlabelvalue;
 
-checkboxes = checkboxes.filter(item => item);
+         data_value.labelvalue =  myString; 
+
+         checkboxes[[myString]] =  data_value;
+
+     
+  });
+
+  
+
+  checkboxes = checkboxes.filter(item => item);
+
+  parentDiv.find('.lead_value_after_save').append('<h2 class="elementorlabeledit">Edit Label</h2>');
 
 
 jQuery.each(checkboxes, function (key, value) {
 
-  jQuery('.lead_value_after_save').append('<div><input type="text" class="lead_calss" data-id="'+value.labelvalue+'" value="'+value.label+'"  name="after_save_labels[]" /></div>');
+  parentDiv.find('.lead_value_after_save').append('<div><input type="text" class="lead_calss" data-id="'+value.labelvalue+'" value="'+value.label+'"  name="after_save_labels[]" /></div>');
+
 });
 
-jQuery('.lead_value_after_save').append('<button type="button" class="leadtypeupdate" name="leadtypesave">Update Label</button>');
-  });
 
-   //onclick function for create new leadtype api call.
-   jQuery(document).on("click", ".leadtypeupdate", function (evt) {
+
+parentDiv.find('.lead_value_after_save').append('<button type="button" class="leadtypeupdate" name="leadtypesave">Update Label</button>');
+
+ });
+
+ 
+
+ 
+
+ jQuery(document).on("click", ".leadtypeupdate", function (evt) {
+
     var productIds = [];
+
+    var object = jQuery(this).closest('.elementor-repeater-fields');
+
+    var formobject = jQuery(object).closest('.entry-content');
+
+
+     var item_id = jQuery(object).find('input').val();
+     
+     alert(item_id);
+
 
 
     var url = jQuery(location).attr('href');
 
+
+
     var URLVariables = url.split('&')
+
+
 
     //alert(URLVariables.get('post'));
 
-   var check_after_Values = [];
 
-var dataLabelValue=[];
-var selectedValues=[];
-    jQuery('.lead_calss').each(function(){
 
-      
-      var data_Value = {};
-
-     data_Value.label = jQuery(this).val();
-     data_Value.labelvalue =  jQuery(this).attr("data-id"); 
-     selectedValues[[jQuery(this).attr("data-id")]]=data_Value;
-     check_after_Values.push(data_Value);
-     dataLabelValue.push(jQuery(this).attr("data-id"));
+    var check_after_values = [];
     
-       
-   }); 
-   selectedValues = selectedValues.filter(item => item);
-  
+    var datalabelvalue=[];
+    
+    var selectedvalues=[];
+
+ jQuery('.lead_calss').each(function(){
+
+     var data_value = {};
+
+     data_value.label = jQuery(this).val();
+
+     data_value.labelvalue =  jQuery(this).attr("data-id"); 
+
+     selectedvalues[[jQuery(this).attr("data-id")]]=data_value;
+
+     check_after_values.push(data_value);
+
+     datalabelvalue.push(jQuery(this).attr("data-id"));
+
+      }); 
+
+   selectedvalues = selectedvalues.filter(item => item);
+
    let searchParams = new URLSearchParams(window.location.search)
 
    let param = searchParams.get('post');
-   
 
+   
    jQuery.ajax({
+
     url: ajaxurl,
+
     type: "POST",
+
     cache: false,
+
     data: {
+
       action: "leadtype_elementor_savelist",
-      check_after_Values:selectedValues,
-      post_id : param
+
+      check_after_values:selectedvalues,
+
+      post_id : param,
+
+      item_id : item_id
+
      
+
     },
+
     success: function (data) {
 
+
       jQuery('.lead_value_after_save').css('display','none');
-      jQuery(".checkbox_values").css("display","block");
       jQuery('.lead_value_after_save').html("");
 
-  
+
     },
+
+
 
     error: function (errorThrown) {
+
       console.log(errorThrown);
+
     },
-  });
 
   });
+
+
+
+  }); 
+
+ 
+
+
+
+
+
   jQuery(document).on("click", ".createleadsave", function (evt) {
+
     var lead = jQuery(".createlead").val();
+
     if (lead !== "") {
+
       lead_folder_ids = jQuery(
+
         ".elementor-control-SelectLeadFolder > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
+
       ).val();
+
       lead_folder_ids = jQuery(this).val();
+
       var lead_folder_id = lead_folder_ids.substr(
+
         lead_folder_ids.indexOf("#") + 1
+
       );
 
+
+
       if (lead_folder_id == "") {
+
         var lead_folder_id_value = lead_folder_ids.split("#")[0];
+
       } else {
+
         var lead_folder_id_value = lead_folder_id;
+
       }
+
       jQuery.ajax({
+
         url: ajaxurl,
+
         type: "POST",
+
         cache: false,
+
         data: {
+
           action: "btnleadsave",
+
           leadtypevalue: lead,
+
           description: lead,
+
           mngdlistind: false,
+
           costforall: "",
+
           costperlead: "",
+
           sales_ind: "no",
+
           system_ind: "no",
+
           blog_commenters: "no",
+
           blog_subscribers: "no",
+
           folder_id: lead_folder_id_value,
+
         },
+
         success: function (data) {
+
           jQuery(
+
             ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
+
           ).append('<option value="' + data + '">' + lead + "</option>");
           jQuery(
             ".elementor-control-SelectLeadType > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select"
@@ -410,42 +596,82 @@ jQuery(document).on(
       (jQuery("input[type=checkbox]").is(":checked") && getvalue == "") ||
       (jQuery("input[type=checkbox]").is(":checked") && getvalue == 0)
     ) {
+
       jQuery(".elementor-control-SelectWebinar").css("border", "2px solid red");
+
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);
+
     } else {
+
       jQuery(".elementor-control-SelectWebinar").removeAttr("style");
+
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
+
     }
+
   }
+
 );
 
+
+
 //onchange function  for select email
+
 jQuery(document).on(
+
   "change",
+
   ".elementor-control-SelectEmail  > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
+
   function () {
+
     var selectemail = jQuery(this).val();
+
     if (selectemail == "" || selectemail == 0) {
+
       jQuery(".elementor-control-SelectEmail").css("border", "2px solid red");
+
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);
+
     } else {
+
       jQuery(".elementor-control-SelectEmail").removeAttr("style");
+
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
+
     }
+
   }
+
 );
+
 //on change function for webinars
+
 jQuery(document).on(
+
   "change",
+
   ".elementor-control-SelectWebinar  > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
+
   function () {
+
     var selectwebinar = jQuery(this).val();
+
     if (selectwebinar == "" || selectwebinar == 0) {
+
       jQuery(".elementor-control-SelectWebinar").css("border", "2px solid red");
+
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", true);
+
     } else {
+
       jQuery(".elementor-control-SelectWebinar").removeAttr("style");
+
       jQuery("#elementor-panel-saver-button-publish").attr("disabled", false);
+
     }
+
   }
+
 );
+

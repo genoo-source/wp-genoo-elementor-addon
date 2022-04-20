@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.4.3
+ * Version:     1.4.4
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -145,31 +145,38 @@ add_filter(
 
         global $wpdb,$post;
 
+       $formvalue = $item['_id'];
+
+        
+
       if ($item['third_party_input'] == 'leadtypes') {
 
             $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
-        
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+
+     
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='".$formvalue."'");
 
             $values = array();
 
 
             foreach ($leadtypes as $leadtype) {
             
-                $values[] = "$leadtype->lead_label|$leadtype->lead_values\n"; 
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values"; 
             }
 
-            $valuetests = implode(' ', $values);
+        $valuetests = implode("\n", $values);
 
-            $item['field_options'] = "Please select a value:|\n.$valuetests";
-            return $item;
+  $item['field_options'] =  "Please select a value:|\n$valuetests";
+         
         }
+     
+        return $item;
 
       
     },
     10,
     3
-);
+); 
 
 add_filter(
     'elementor_pro/forms/render/item/checkbox',
@@ -183,20 +190,25 @@ add_filter(
             $values = array();
 
          $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+
+         $formvalue = $item['_id'];
+
         
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='".$formvalue."'");
 
             foreach ($leadtypes as $leadtype) {
             
-                $values[] = "$leadtype->lead_label|$leadtype->lead_values\n"; 
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values"; 
             }
+        
+            $valuetests = implode("\n", $values);
 
-            $valuetests = implode(' ', $values);
+         
 
             $item['field_options'] = "Please select a value:|\n.$valuetests";
-            return $item;
+        
         }
-
+        return $item;
     },
     10,
     3
@@ -211,30 +223,37 @@ add_filter(
             $values = array();
            
             $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+
+            $formvalue = $item['_id'];
+
         
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID");
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`=='".$formvalue."'");
 
             foreach ($leadtypes as $leadtype) {
             
-                $values[] = "$leadtype->lead_label|$leadtype->lead_values\n"; 
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values"; 
             }
 
-            $valuetests = implode(' ', $values);
+            $valuetests = implode("\n", $values);
 
             $item['field_options'] = "Please select a value:|\n.$valuetests";
-            return $item;
+          
         }
 
-    
+        return $item;
     },
     10,
     3
 );
 
+
+
 // formsubmit for lead
 add_action(
     'elementor_pro/forms/new_record',
     function ($record, $ajax_handler) {
+
+    
         global $post, $WPME_API;
         $form_name = $record->get_form_settings('form_name');
         $settings = $record->get('form_settings');
@@ -422,6 +441,8 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
     //custom code here
     global $WPME_API, $wpdb;
 
+
+    $datatable = $wpdb->prefix."leadtype_form_save_elementor";
     //   if(!empty($editor_data)):
 
     foreach ($editor_data as $elementorcode) {
@@ -429,13 +450,17 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
             $values = [];
 
             $code_id = [];
+            $code_ids = [];
 
             foreach ($code['elements'] as $codeset) {
+             
                 $values['form_name'] = $codeset['settings']['form_name'];
 
                 $values['form_type'] = 'EF';
 
                 $code_id['id'] = $codeset['id'];
+
+                
 
                 $get_values = get_post_meta(
                     $post_id,
@@ -452,6 +477,9 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
                 update_function($values, $post_id, $codeset['id']);
 
                 $code_ids[] = $codeset['id'];
+
+            
+
             }
         }
     }
@@ -712,7 +740,7 @@ final class Genoo_Elementor_Extension
             [$this, 'adminEnqueueScripts'],
             10
         );
-        add_action('admin_init', [$this, 'adminEnqueueScripts'], 10);
+        add_action('admin_init', [$this, 'adminEnqueueScripts']);
         add_action('wp_ajax_leadtype_elementor_savelist', [
             $this,
             'leadtype_elementor_savelist',
@@ -903,14 +931,16 @@ final class Genoo_Elementor_Extension
         $checkboxdetails = $_REQUEST['check_after_Values'];
 
         $post_id = $_REQUEST['post_id'];
+        $form_id = $_REQUEST['item_id'];
         $table = $wpdb->prefix . 'leadtype_form_save_elementor';
-        $wpdb->delete($table,['post_id' => $post_id]);
+        $wpdb->delete($table,['post_id' => $post_id,'item_id' => $form_id]);
 
     foreach ($checkboxdetails as $checkboxdetail) {
          $wpdb->insert($table, [
                 'post_id' => $post_id,
                 'lead_values' => $checkboxdetail['labelvalue'],
                 'lead_label' => $checkboxdetail['label'],
+                'item_id' => $form_id
             ]); 
    
            
