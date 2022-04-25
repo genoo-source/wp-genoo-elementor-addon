@@ -213,21 +213,11 @@ parentDiv.find('.lead_value_after_save').append('<button type="button" class="le
 
      var item_id = jQuery(object).find('input').val();
      
-     alert(item_id);
-
-
-
-    var url = jQuery(location).attr('href');
+     var url = jQuery(location).attr('href');
 
 
 
     var URLVariables = url.split('&')
-
-
-
-    //alert(URLVariables.get('post'));
-
-
 
     var check_after_values = [];
     
