@@ -78,9 +78,9 @@ register_activation_hook(__FILE__, function () {
         $sql = "CREATE TABLE {$wpdb->prefix}leadtype_form_save_elementor (
             id mediumint(8) unsigned not null auto_increment,
             post_id mediumint(8) unsigned not null,
-            is_active tinyint(1),
             lead_values varchar(255),
             lead_label  varchar(255),
+            item_id varchar(255),
             PRIMARY KEY  (id))";
        dbDelta($sql);
 
@@ -928,7 +928,7 @@ final class Genoo_Elementor_Extension
     {
         global $wpdb;
     
-        $checkboxdetails = $_REQUEST['check_after_Values'];
+        $checkboxdetails = $_REQUEST['check_after_values'];
 
         $post_id = $_REQUEST['post_id'];
         $form_id = $_REQUEST['item_id'];
