@@ -403,6 +403,7 @@ add_action(
                     elseif ($WPME_API->http->getResponseCode() == 200):
                     endif;
                 } catch (Exception $e) {
+
                     if ($WPME_API->http->getResponseCode() == 404):
 
 
@@ -419,6 +420,10 @@ add_action(
                 time() + 10 * 365 * 24 * 60 * 60,
                 '/'
             );
+            else : 
+                 $ajax_handler->add_error_message( 'It was never sent to the Genoo account' );
+
+            
         endif;
     },
     10,
