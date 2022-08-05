@@ -406,7 +406,21 @@ class Genoo_Action_After_Submit extends
 
                     foreach ( $data_elements_value as $elements_value ) {
 
-                        $dataleadtypefolder = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
+                        $dataleadtypefolder_id = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
+                        
+                        $result = explode("#", $dataleadtypefolder_id);
+                        
+                        
+                        if($result[1]!='')
+                        {
+                        $dataleadtypefolder = $result[1];
+                        }
+                      else
+                      {
+                        $dataleadtypefolder = $result[0];
+                      }
+             
+                     
                         $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
 
                         if (method_exists($WPME_API, 'callCustom')):
@@ -440,7 +454,7 @@ class Genoo_Action_After_Submit extends
                     }
                 }
             }
-            // Make a GET request, to Genoo / WPME api, for that rest endpoint
+             // Make a GET request, to Genoo / WPME api, for that rest endpoint
             // Looks like folders not found
         else:
             if (method_exists($WPME_API, 'callCustom')):
@@ -632,7 +646,7 @@ class Genoo_Action_After_Submit extends
                                 $getfolder->type_id .
                                     '#' .
                                     $child_folders->type_id
-                            ] = '>>' . $child_folders->name;
+                            ] = '--' . $child_folders->name;
                         }
                     endforeach;
                 endforeach;

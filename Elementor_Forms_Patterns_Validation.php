@@ -10,15 +10,24 @@ class Elementor_Forms_Patterns_Validation
             100,
             2
         );
+  
         add_action(
             'elementor/element/form/section_form_fields/before_section_end',
             [$this, 'add_class_field_control_leadtype'],
             100,
             2
         );
-             add_action(
+          
+        add_action(
             'elementor/element/form/section_form_fields/before_section_end',
-            [$this, 'add_class_field_control_leadtype_button'],
+            [$this, 'add_class_field_control_leadfolder'],
+            100,
+            2
+        );
+      
+           add_action(
+            'elementor/element/form/section_form_fields/before_section_end',
+            [$this, 'add_class_field_control_leadtype_save'],
             100,
             2
         );
@@ -139,6 +148,7 @@ class Elementor_Forms_Patterns_Validation
 
         $element->update_control('form_fields', $control_data);
     }     
+
     public function add_class_field_control_leadtype($element, $args)
     {
         global $post, $WPME_API;
@@ -147,7 +157,7 @@ class Elementor_Forms_Patterns_Validation
             $element->get_name(),
             'form_fields'
         );
-
+        
         if (is_wp_error($control_data)) {
             return;
         }
@@ -157,7 +167,8 @@ class Elementor_Forms_Patterns_Validation
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
 
-                $leadTypes = $WPME_API->callCustom('/leadtypes', 'GET', null);
+                $leadTypes = $WPME_API->callCustom('/listLeadTypeFolders/Uncategorized', 'GET', null);
+               
             } catch (Exception $e) {
                 if ($WPME_API->http->getResponseCode() == 404):
 
@@ -166,68 +177,284 @@ class Elementor_Forms_Patterns_Validation
                 endif;
             }
         endif;
-        $i = 0;
-      
+        
+        $leadTypesvalueset = array();
+         $leadTypesvalueset[0] = 'Uncategorized';
+       
+        foreach($leadTypes as $leadTypesvalue)
+        { 
+            $leadTypesvalueset[$leadTypesvalue->type_id . '#'] = $leadTypesvalue->name;
 
-        foreach ($leadTypes as $leadType) {
-
-            $tmp->add_control('checkbox_values-'.$leadType->id, [
-                'name' => 'checkbox_values-'.$leadType->id,
-                'label_block' => true,
-                'label_on' => __('Show', 'Genoo Elementor Extension'),
-                'label_off' => __('Hide', 'Genoo Elementor Extension'),
-                 'label_attr' => __('sdsdsdsd', 'Genoo Elementor Extension'),
-                'label' => __($leadType->name, 'Genoo Elementor Extension'),
+        foreach ($leadTypesvalue->child_folders as $leadTypesfolders):
+                        
+                   if ($leadTypesfolders->parent_id == $leadTypesvalue->type_id) {
+                                $leadTypesvalueset[
+                                    $leadTypesvalue->type_id .
+                                        '#' .
+                                        $leadTypesfolders->type_id
+                                ] = '--' . $leadTypesfolders->name;
+                            }
+            
+            endforeach;
+        }
+    
+        
+         $tmp->add_control(
+			'show_leadfolders',
+			[
+			    'name' => 'show_leadfolders',
+				'label' => esc_html__( 'Select lead folders', 'Genoo Elementor Extension' ),
+				'type' => \Elementor\Controls_Manager::SELECT2,
+				'multiple' => true,
+		         'options' => $leadTypesvalueset,
+		          'condition' => [
+                    'third_party_input' => 'leadtypes',
+                ],
+                ]
+		);
+		
+		$leadfolder_value_loader ='<div class="elementorleadfolderloader">';
+		
+        $leadfolder_value_loader .='<p style="display:none;"><img src='.plugins_url(
+                    "/images/loading.gif",
+                    __FILE__
+                ).' /></p>';
+        $leadfolder_value_loader.='</div>';
+        
+        
+            $tmp->add_control('elementor_lead_folder_loader',[
                 'inner_tab' => 'form_fields_advanced_tab',
                 'tab' => 'content',
                 'tabs_wrapper' => 'form_fields_tabs',
-                'type' => 'switcher',
-                'classes' => 'checkboxvalues',
-                'return_value' => 'yes',
-                'default' => 'No',
-                'dataidvalue'=> $leadType->id,
-                'content_classes' => 'leadtype_options',
-                'condition' => [
-                    'third_party_input' => 'leadtypes',
-                ]
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw' => __(
+                   $leadfolder_value_loader,
+                    'Genoo Elementor Extension'
+                ),
+                'content_classes' => 'elementor_lead_folder_loader',
+                
+                'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                    [
+                        'name' => 'show_leadfolders',
+                        'operator' => '!=',
+                        'value' => '',
+                    ],
+                    
+                    [
+                        'name' => 'third_party_input',
+                        'operator' => '==',
+                        'value' => 'leadtypes',
+                    ],
+                ],
+            ],
             ]);
-            
-   
-        
-     
-        $pattern_field = $tmp->get_controls();
 
-        $name_value =  'checkbox_values-'.$leadType->id;
-    
-    
-        // insert new class field in advanced tab before field ID control
-            $new_order = [];
+        
+          $pattern_field = $tmp->get_controls();
+       
+          $new_order = [];
             foreach ($control_data['fields'] as $field_key => $field) {
 
                 if ('custom_id' === $field['name']) {
 
                     
-            $new_order[$name_value] = $pattern_field[$name_value];
+            $new_order['show_leadfolders'] = $pattern_field['show_leadfolders'];
+             $new_order['elementor_lead_folder_loader'] = $pattern_field['elementor_lead_folder_loader'];
             
                 }
             
-
-                $new_order[$field_key] = $field;
+        $new_order[$field_key] = $field;
             }
 
             $control_data['fields'] = $new_order;
 
 
             $element->update_control('form_fields', $control_data);
-
-            $i++;
-        }
+      
     }
     
-    public function add_class_field_control_leadtype_button($element, $args)
+  public function updated_lead_types()
+  {
+      global $post;
+      
+     $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
+        
+    if (!empty($elementor_data)):
+        
+           $get_show_leadfolders = [];
+        
+            $decode_datas = json_decode($elementor_data);
+           
+            foreach ($decode_datas as $decode_data) {
+                
+                $data = $decode_data->elements;
+
+                foreach ($data as $dataelement) {
+                    
+                    $data_element = $dataelement->elements;
+                 
+                    foreach ($data_element as $elements_value) {
+                        
+                 foreach($elements_value->settings->form_fields as $form_fields)
+                 {
+                 
+                 $get_show_leadfolders[] = $form_fields->show_leadfolders;
+                 
+                 }
+                        
+   }
+    }
+        }
+        return $get_show_leadfolders;
+                 
+        endif;
+  }
+
+ public function add_class_field_control_leadfolder($element, $args)
+    {
+          global $post, $WPME_API;
+        $elementor = \Elementor\Plugin::instance();
+        $control_data = $elementor->controls_manager->get_control_from_stack(
+            $element->get_name(),
+            'form_fields'
+        );
+        
+           $updated_lead_types = $this->updated_lead_types();
+           
+            $leadtypes_array = [];
+                
+            foreach($updated_lead_types as $updated_lead_type)
+            {
+                foreach($updated_lead_type as $updated_lead)
+                {
+                     $update_lead_type = explode("#", $updated_lead);
+                     
+                      $update_lead_type_value = $update_lead_type[1];
+                      
+                      if($update_lead_type_value!='')
+                      {
+                        $leadtypes_array[] = $update_lead_type_value;  
+                      }
+                      else
+                      {
+                      $leadtypes_array[] = $update_lead_type[0];      
+                      }
+                       
+                    
+                }
+                
+            }
+            
+         if (is_wp_error($control_data)) {
+            return;
+        }
+        $tmp = new Elementor\Repeater();
+        
+         if (method_exists($WPME_API, 'callCustom')):
+            try {
+                // Make a GET request, to Genoo / WPME api, for that rest endpoint
+
+                   $leadTypesvalues = $WPME_API->callCustom('/leadtypes', 'GET', null);
+                     $get_folders = $WPME_API->callCustom(
+                                "/listLeadTypeFolders/Uncategorized",
+                                "GET",
+                                "NULL"
+                            );
+
+                            foreach ($get_folders as $get_folder):
+                                $folder_names[0] = "Uncategorized";
+                                $folder_names[$get_folder->type_id] =
+                                    $get_folder->name;
+                                foreach (
+                                    $get_folder->child_folders
+                                    as $child_folders
+                                ):
+                                    if (
+                                        $child_folders->parent_id ==
+                                        $get_folder->type_id
+                                    ) {
+                                        $folder_names[$child_folders->type_id] =
+                                            "--" . $child_folders->name;
+                                    }
+                                endforeach;
+                            endforeach;
+            } catch (Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                 // Looks like folders not found
+                endif;
+            }
+        endif; 
+        
+        $leadtypesbasedonfolder = array();
+               
+        foreach($leadTypesvalues as $leadTypesvalue)
+        {
+            foreach($folder_names as $key => $foldervalue){  
+         if (in_array($leadTypesvalue->folder_id, $leadtypes_array)) :
+        
+              if($key==$leadTypesvalue->folder_id):
+             $leadtypesbasedonfolder[$leadTypesvalue->folder_id.'-'.$leadTypesvalue->id] = $leadTypesvalue->name. "#(" . $foldervalue . ")";
+             endif;
+      
+               endif;
+        }
+        }
+        
+          
+            $tmp->add_control(
+			'show_leadtypes',
+			[
+			    'name' => 'show_leadtypes',
+				'label' => esc_html__( 'Select lead types', 'Genoo Elementor Extension' ),
+				'type' => \Elementor\Controls_Manager::SELECT2,
+				'multiple' => true,
+		         'options' => $leadtypesbasedonfolder,
+                 'default' => $leadtypesbasedonfolder[0],
+                
+                  'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                    [
+                        'name' => 'show_leadfolders',
+                        'operator' => '!=',
+                        'value' => '',
+                    ],
+                    
+                    [
+                        'name' => 'third_party_input',
+                        'operator' => '==',
+                        'value' => 'leadtypes',
+                    ],
+                ],
+            ],
+                 ]
+		);
+
+         $pattern_field = $tmp->get_controls();
+         
+           $new_order = [];
+           
+         foreach ($control_data['fields'] as $field_key => $field) {
+
+                if ('custom_id' === $field['name']) {
+               $new_order['show_leadtypes'] = $pattern_field['show_leadtypes'];
+                }
+            $new_order[$field_key] = $field;
+            }
+
+            $control_data['fields'] = $new_order;
+
+            $element->update_control('form_fields', $control_data);
+        
+    }
+    
+   public function add_class_field_control_leadtype_save($element, $args)
     {
         
-           global $post, $WPME_API;
+           global $post, $WPME_API,$wpdb;
+        
         $elementor = \Elementor\Plugin::instance();
         $control_data = $elementor->controls_manager->get_control_from_stack(
             $element->get_name(),
@@ -239,12 +466,83 @@ class Elementor_Forms_Patterns_Validation
         }
         $tmp = new Elementor\Repeater();
         
+        $tmp->add_control('leadsavetypbutton', [
+                'name' => 'leadsavetypbutton',
+            'inner_tab' => 'form_fields_advanced_tab',
+            'tab' => 'content',
+            'tabs_wrapper' => 'form_fields_tabs',
+            'type' => \Elementor\Controls_Manager::RAW_HTML,
+            'raw' => __(
+                '<button type="button"  class="btn btn-primary saveleadtypeidset">Edit label</button>',
+                'Genoo Elementor Extension'
+            ),
+            'content_classes' => 'saveleadtypeidsetup',
+            'conditions' => [
+                'relation' => 'and',
+                'terms' => [
+                
+                    [
+                        'name' => 'show_leadfolders',
+                        'operator' => '!=',
+                        'value' => '',
+                    ],
+                    [
+                        'name' => 'third_party_input',
+                        'operator' => '==',
+                        'value' => 'leadtypes',
+                    ],  
+                      [
+                        'name' => 'show_leadtypes',
+                        'operator' => '!=',
+                        'value' => '',
+                    ],
+                  
+                ],
+            ],  
+        ]); 
+        $lead_value_loader ='<div class="elementorleadloader">';
+        $lead_value_loader .='<p style="display:none;"><img src='.plugins_url(
+                    "/images/loading.gif",
+                    __FILE__
+                ).' /></p>';
+        $lead_value_loader.='</div>';
+        
         $lead_value_after_save ='<div class="lead_value_after_save">';
         
-     
         $lead_value_after_save.='</div>';
         
-         $tmp->add_control('checkbox_after_save_values',[
+        $updatelabel = $wpdb->prefix.'leadtype_form_save_elementor';
+        
+                $lead_options = [];
+                
+           $updated_label_items = array();
+
+        $updated_labels = $wpdb->get_results("select lead_values,lead_label,folder_id from $updatelabel where `post_id`=$post->ID");
+         
+   
+        foreach($updated_labels as $updated_label){
+         
+          $updated_label_items[$updated_label->folder_id.'-'.$updated_label->lead_values] = $updated_label->lead_label;
+            }
+            
+            
+    $tmp->add_control('elementor_lead_loader',[
+                'inner_tab' => 'form_fields_advanced_tab',
+                'tab' => 'content',
+                'tabs_wrapper' => 'form_fields_tabs',
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw' => __(
+                   $lead_value_loader,
+                    'Genoo Elementor Extension'
+                ),
+                'content_classes' => 'elementor_lead_loader',
+                'condition' => [
+                    'third_party_input' => 'leadtypes',
+                ],
+            ]);
+            
+       
+    $tmp->add_control('checkbox_after_save_values',[
                 'inner_tab' => 'form_fields_advanced_tab',
                 'tab' => 'content',
                 'tabs_wrapper' => 'form_fields_tabs',
@@ -258,30 +556,40 @@ class Elementor_Forms_Patterns_Validation
                     'third_party_input' => 'leadtypes',
                 ],
             ]);
-        
-           $tmp->add_control('leadtypbutton', [
-                'name' => 'leadtypbutton',
-            'inner_tab' => 'form_fields_advanced_tab',
-            'tab' => 'content',
-            'tabs_wrapper' => 'form_fields_tabs',
-            'type' => \Elementor\Controls_Manager::RAW_HTML,
-            'raw' => __(
-                '<button type="button" class="btn btn-primary saveitemsleadtypeidset">save</button>',
-                'Genoo Elementor Extension'
-            ),
-            'content_classes' => 'saveitemsleadid',
-            'conditions' => [
+            
+            
+          $tmp->add_control(
+			'updated_labels',
+			[
+			    'name' => 'updated_labels',
+				'label' => esc_html__( 'Edited Labels', 'Genoo Elementor Extension' ),
+				'type' => \Elementor\Controls_Manager::SELECT2,
+					'multiple' => true,
+		         'options' => $updated_label_items,
+		         'conditions' => [
                 'relation' => 'and',
                 'terms' => [
-                
+                     [
+                        'name' => 'show_leadfolders',
+                        'operator' => '!=',
+                        'value' => '',
+                    ],
+                    [
+                        'name' => 'show_leadtypes',
+                        'operator' => '!=',
+                        'value' => '',
+                    ],
                     [
                         'name' => 'third_party_input',
                         'operator' => '==',
                         'value' => 'leadtypes',
                     ],
+                 
                 ],
-            ],  
-        ]); 
+            ],
+                 ]
+		);
+            
            $pattern_field = $tmp->get_controls();
 
 
@@ -291,9 +599,17 @@ class Elementor_Forms_Patterns_Validation
 
                 if ('custom_id' === $field['name']) {
 
-                    $new_order['leadtypbutton'] = $pattern_field['leadtypbutton'];
+                    $new_order['leadsavetypbutton'] = $pattern_field['leadsavetypbutton'];
+                    
+                      $new_order['elementor_lead_loader'] = $pattern_field['elementor_lead_loader'];
+                    
+                    
+                    $new_order['checkbox_after_save_values'] = $pattern_field['checkbox_after_save_values'];
+                     
+                    
+                    $new_order['updated_labels'] = $pattern_field['updated_labels'];
                
-               $new_order['checkbox_after_save_values'] = $pattern_field['checkbox_after_save_values'];
+           
                 }
             
 
@@ -307,7 +623,6 @@ class Elementor_Forms_Patterns_Validation
   
         
     }
-    
 
  //show leadfields for mapping
 
@@ -349,8 +664,44 @@ class Elementor_Forms_Patterns_Validation
         return $map_fields;
     }
 
+ //get selected item options
+    
+       public function get_item_options()
+       {
+        global $post, $WPME_API;
+        
+        
+        $elementor_data = get_post_meta($post->ID, '_elementor_data', true);
+        
+          if(!empty($elementor_data)):
+            $decode_datas = json_decode($elementor_data);
+           
+            foreach($decode_datas as $decode_data) {
+                $data = $decode_data->elements;
+
+                foreach($data as $dataelement) {
+                    $data_element = $dataelement->elements;
+                 
+                    foreach($data_element as $elements_value) {
+                       
+                      foreach($elements_value->settings->form_fields as $item_form_fields)
+                         {
+               
+                $item_ids[$item_form_fields->_id] = $item_form_fields->updated_labels;
+                      
+                         }
+                  
+                    }
+
+}
+}
 
 
+return array_filter($item_ids);
+ 
+endif;
+
+}
 
 }
 new Elementor_Forms_Patterns_Validation();

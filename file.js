@@ -6,7 +6,99 @@ jQuery(document).on("ready", function () {
 
   leadcreate();
 
-  //leadfolder on change for show leadtypes.
+
+jQuery(document).on("change", ".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select", function () {
+    
+     
+    
+         var objectvalue = jQuery(this).closest('.elementor-repeater-fields');
+         
+          var selectedvalues = [];
+             
+       
+         var parentDiv=jQuery(objectvalue);
+         
+          parentDiv.find('.saveleadtypeidset').css('display','block');
+          
+          parentDiv.find('.lead_value_after_save').html("");
+          
+          parentDiv.find('.leadtypeupdate').css('display','none');
+         
+            parentDiv.find(".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option:selected").each(function(){
+                
+                  var data_value = {};
+    
+                 data_value.label = jQuery(this).html();
+                
+                 data_value.labelvalue =  jQuery(this).val(); 
+                 
+               selectedvalues.push(data_value);
+              
+              });
+              
+             if(selectedvalues.length!=0){
+              
+             
+       let searchParams = new URLSearchParams(window.location.search);
+    
+       let param = searchParams.get('post');
+       
+       var item_id = jQuery(objectvalue).find('input').val();
+   
+       jQuery.ajax({
+    
+        url: ajaxurl,
+    
+        type: "POST",
+    
+        cache: false,
+    
+        data: {
+    
+          action: "leadtype_elementor_change_savelist",
+    
+          check_after_values:selectedvalues,
+    
+          post_id : param,
+    
+          item_id : item_id
+    
+         
+    
+        },
+    
+        success: function (data) {
+            
+            var updatelabelsval =  parentDiv.find(
+                ".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").val();
+                
+       
+         jQuery.each(selectedvalues, function (key, value) {
+             
+           if(jQuery.inArray(value.labelvalue, updatelabelsval) == -1)
+           {
+            parentDiv.find(
+                    ".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").append('<option value="' + value.labelvalue + '" selected> '+ value.label +' </option>');
+           }
+           
+               });
+         
+               
+           jQuery(".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").trigger('change');
+    },
+    
+      error: function (errorThrown) {
+            console.log(errorThrown);
+          },
+           
+    });
+          
+}
+else
+{
+ parentDiv.find('.saveleadtypeidset').css('display','none');
+}
+  });
 
   jQuery(document).on(
 
@@ -128,79 +220,212 @@ jQuery(document).on("ready", function () {
 
   );
 
+jQuery(document).on(
 
+    "change",
 
-  //onclick function for create new leadtype api call.
+    ".elementor-control-show_leadfolders > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select",
 
-
-
-  jQuery(document).on("click", ".saveitemsleadtypeidset", function (evt) {
-
-
-          var checkboxes = [];
-
+    function () { 
+        
+          var select_lead_folder_id =  jQuery(this).val();
+          
           var objectvalue = jQuery(this).closest('.elementor-repeater-fields');
 
 
           var parentDiv=jQuery(objectvalue);
-
-
-         jQuery('.lead_value_after_save').css('display','block');
-
-         parentDiv.find(".elementor-control-type-switcher .elementor-switch-input:checked").each(function(){
-
           
-
-            var data_value = {};
-
+          if(select_lead_folder_id!=''){
+          
+          parentDiv.find('.elementorleadfolderloader > p').css('display','block');
+         parentDiv.find('.elementor-control-show_leadtypes').css('display','none');
         
+     
+         parentDiv.find('.saveleadtypeidset').css('display','block');
+          
+         parentDiv.find('.lead_value_after_save').html("");
+          
+         parentDiv.find('.leadtypeupdate').css('display','none');
 
-        var object = jQuery(this).closest('.elementor-control-content');
+       
+     var optionExists = parentDiv.find('.elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select').val();
+     var array = "" + optionExists + "";
+    if(array.length!=0){
+    var  myArray = array.split(',');
+    }
+    else
+    {
+      var  myArray = [];
+    }
+  
+   if(myArray.length==0)
+   {
+      parentDiv.find(".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").html(""); 
+     }
+    jQuery.ajax({
+      url: ajaxurl,
+      type: "POST",
+      cache: false,
+      data: {
+        action: "select_lead_types_options",
+        select_lead_folder_id: select_lead_folder_id
+      },
+       
+      success: function (data) {
+      jQuery.each(data, function (key, value) {
+         var append_if_not_exists =  parentDiv.find(".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option[value=" + key + "]").length > 0;
+         
+         if(append_if_not_exists==''){
+         
+      parentDiv.find(".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").append('<option value="' + key + '">' + value + " </option>");
+         
+         }
+       parentDiv.find('.elementorleadfolderloader > p').css('display','none');
+       
+        parentDiv.find('.elementor-control-show_leadtypes').css('display','block');
+   
+   });
+       },
 
+  error: function (errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+          }   
+          else
+          {
+       parentDiv.find('.elementorleadfolderloader > p').css('display','none');
+       
+       parentDiv.find('.elementor-control-show_leadtypes').css('display','none');
+       parentDiv.find('.saveleadtypeidset').css('display','none');
+       
+       parentDiv.find('.elementor-control-updated_labels').css('display','none');
+        
+          }
+        
+    });
+
+  //on unselect function for leadtype api call.
+
+jQuery(document).on("select2:unselecting", ".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select", function(e){
+    
+        let searchParams = new URLSearchParams(window.location.search);
+    
+        let param = searchParams.get('post');
+       
+        var objectvalue = jQuery(this).closest('.elementor-repeater-fields');
+
+        var parentDiv=jQuery(objectvalue);
+
+        var item_id = jQuery(objectvalue).find('input').val();
+        
+        var delete_lead_type_id = e.params.args.data.id;
+   
+       jQuery.ajax({
+    
+        url: ajaxurl,
+    
+        type: "POST",
+    
+        cache: false,
+    
+        data: {
+    
+          action: "leadtype_delete_option",
+    
+          delete_lead_type_id:delete_lead_type_id,
+    
+          post_id : param,
+    
+          item_id : item_id
+    
+          },
+    
+        success: function (data) {
+            
+                   parentDiv.find(
+                    ".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option[value=" + delete_lead_type_id + "]").remove();
+                    
+                 
+           
+    },
+    
+      error: function (errorThrown) {
+            console.log(errorThrown);
+          },
+           
+    });
     
 
-     var item_id = jQuery(object).find('.elementor-control-field'); 
+});
+  //on unselect function for lead folder api call.
+jQuery(document).on("select2:unselecting", ".elementor-control-show_leadfolders > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select", function(e){
+    
+        let searchParams = new URLSearchParams(window.location.search);
+    
+        let param = searchParams.get('post');
+       
+        var objectvalue = jQuery(this).closest('.elementor-repeater-fields');
 
-     
+        var parentDiv=jQuery(objectvalue);
 
-      var getlabelvalue = jQuery(object).find('.elementor-control-title').html(); 
-
-      var datasetting = jQuery(this).attr("data-setting");
-      
-      var myString = datasetting.substr(datasetting.indexOf("-") + 1)
-
-
-      data_value.label = getlabelvalue;
-
-         data_value.labelvalue =  myString; 
-
-         checkboxes[[myString]] =  data_value;
-
-     
-  });
-
-  
-
-  checkboxes = checkboxes.filter(item => item);
-
-  parentDiv.find('.lead_value_after_save').append('<h2 class="elementorlabeledit">Edit Label</h2>');
-
-
-jQuery.each(checkboxes, function (key, value) {
-
-  parentDiv.find('.lead_value_after_save').append('<div><input type="text" class="lead_calss" data-id="'+value.labelvalue+'" value="'+value.label+'"  name="after_save_labels[]" /></div>');
+        var item_id = jQuery(objectvalue).find('input').val();
+       
+        var delete_lead_folder_id = e.params.args.data.id;
+   
+       jQuery.ajax({
+    
+        url: ajaxurl,
+    
+        type: "POST",
+    
+        cache: false,
+    
+        data: {
+    
+          action: "leadfolder_delete_option",
+    
+          delete_lead_folder_id:delete_lead_folder_id,
+    
+          post_id : param,
+    
+          item_id : item_id
+    
+          },
+    
+        success: function (data) {
+            if(data.length==0)
+            {
+           parentDiv.find(
+                    ".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").html("");     
+            }
+            
+         jQuery.each(data,function(key,value){
+             
+            
+            
+                parentDiv.find(
+                    ".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option[value=" + key + "]").remove();
+                    
+                    
+                    
+                     jQuery(".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option[value=" + key + "]").remove();
+                      
+                    
+            
+                      
+            });
+           
+    },
+    
+      error: function (errorThrown) {
+            console.log(errorThrown);
+          },
+           
+    });
+    
 
 });
-
-
-
-parentDiv.find('.lead_value_after_save').append('<button type="button" class="leadtypeupdate" name="leadtypesave">Update Label</button>');
-
- });
-
- 
-
- 
 
  jQuery(document).on("click", ".leadtypeupdate", function (evt) {
 
@@ -210,14 +435,18 @@ parentDiv.find('.lead_value_after_save').append('<button type="button" class="le
 
     var formobject = jQuery(object).closest('.entry-content');
 
-
+  var parentDiv=jQuery(object);
+  
+ 
+    
      var item_id = jQuery(object).find('input').val();
-     
-     var url = jQuery(location).attr('href');
+   
+    var url = jQuery(location).attr('href');
 
 
 
     var URLVariables = url.split('&')
+
 
     var check_after_values = [];
     
@@ -225,29 +454,42 @@ parentDiv.find('.lead_value_after_save').append('<button type="button" class="le
     
     var selectedvalues=[];
 
- jQuery('.lead_calss').each(function(){
+ jQuery('.lead_calss').each(function(event){
 
      var data_value = {};
+     
+      if(jQuery(this).val()=='')
+    {
+           jQuery(".lead_calss").css(
+
+              "border",
+
+              "2px solid red"
+
+            );
+                event.stopPropagation();
+
+        jQuery('.leadtypeupdate').prop('disabled', true);  
+    }
+     
+    
 
      data_value.label = jQuery(this).val();
-
+     
      data_value.labelvalue =  jQuery(this).attr("data-id"); 
 
-     selectedvalues[[jQuery(this).attr("data-id")]]=data_value;
-
-     check_after_values.push(data_value);
-
-     datalabelvalue.push(jQuery(this).attr("data-id"));
-
-      }); 
+     selectedvalues.push(data_value);
+    
+    }); 
+    
+   if(selectedvalues.length!=0) {
 
    selectedvalues = selectedvalues.filter(item => item);
 
    let searchParams = new URLSearchParams(window.location.search)
 
    let param = searchParams.get('post');
-
-   
+ 
    jQuery.ajax({
 
     url: ajaxurl,
@@ -266,17 +508,30 @@ parentDiv.find('.lead_value_after_save').append('<button type="button" class="le
 
       item_id : item_id
 
-     
-
-    },
+     },
 
     success: function (data) {
+        
+         parentDiv.find(
+            ".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").html("");
+         
+       parentDiv.find('.lead_value_after_save').html("");
+    
+     jQuery.each(selectedvalues, function (key, value) {  
+  
+      parentDiv.find(
+            ".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").append('<option value="' + value.labelvalue + '" selected> '+ value.label +' </option>');
+
+       
+});
+
+   parentDiv.find(".elementor-control-updated_labels > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select").trigger('change');
 
 
-      jQuery('.lead_value_after_save').css('display','none');
-      jQuery('.lead_value_after_save').html("");
+ parentDiv.find('.saveleadtypeidset').css('display','block');
+          
 
-
+    
     },
 
 
@@ -288,16 +543,13 @@ parentDiv.find('.lead_value_after_save').append('<button type="button" class="le
     },
 
   });
-
+      
+     
+}
 
 
   }); 
-
- 
-
-
-
-
+  
 
   jQuery(document).on("click", ".createleadsave", function (evt) {
 
@@ -664,4 +916,84 @@ jQuery(document).on(
   }
 
 );
+
+
+
+
+    
+ jQuery(document).on("click", ".saveleadtypeidset", function (evt) {
+
+  var checkboxeslead = [];
+  
+         jQuery(this).css('display','none');
+         
+  
+          var objectvalue = jQuery(this).closest('.elementor-repeater-fields');
+          
+              var parentDiv=jQuery(objectvalue);
+       
+       parentDiv.find('.elementorleadloader > p').css('display','block');
+   
+
+       let searchParams = new URLSearchParams(window.location.search);
+    
+       let param = searchParams.get('post');
+       
+       var item_id = jQuery(objectvalue).find('input').val();
+       
+   
+        jQuery.ajax({
+              url: ajaxurl,
+              type: "POST",
+              cache: false,
+              data: {
+                action: "get_all_lead_types_options",
+                item_id: item_id,
+                post_id:param
+                
+                
+              },
+              success: function (data) {
+                  
+                  
+        parentDiv.find('.elementorleadloader > p').css('display','none');
+
+                 if(data.length!=0){
+                     
+            parentDiv.find('.lead_value_after_save').css('display','block');
+            
+               jQuery.each(data, function (key, value) {
+        
+          parentDiv.find('.lead_value_after_save').append('<div><input type="text" required class="lead_calss" data-id="'+key+'" value="'+value+'"  name="after_save_labels[]" /></div>');
+        
+        });
+
+
+
+parentDiv.find('.lead_value_after_save').append('<button type="button" class="leadtypeupdate" name="leadtypesave">Update</button>');  
+}
+else
+{
+  parentDiv.find('.lead_value_after_save').css('display','none');
+            
+}
+},
+
+  error: function (errorThrown) {
+        console.log(errorThrown);
+      },
+    });
+
+ // checkboxeslead = checkboxeslead.filter(item => item);
+  
+   parentDiv.find('.lead_value_after_save').html("");
+  
+
+
+ });
+ 
+ 
+
+
+ 
 
