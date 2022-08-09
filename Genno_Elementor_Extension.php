@@ -229,7 +229,7 @@ add_filter(
             $formvalue = $item['_id'];
 
         
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`=='".$formvalue."'");
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='".$formvalue."'");
 
             foreach ($leadtypes as $leadtype) {
             
