@@ -565,7 +565,7 @@ jQuery(document).on("select2:unselecting", ".elementor-control-show_leadfolders 
 
       ).val();
 
-      lead_folder_ids = jQuery(this).val();
+     // lead_folder_ids = jQuery(this).val();
 
       var lead_folder_id = lead_folder_ids.substr(
 
