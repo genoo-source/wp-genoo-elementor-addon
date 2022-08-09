@@ -23,8 +23,10 @@ jQuery(document).on("change", ".elementor-control-show_leadtypes > .elementor-co
           parentDiv.find('.lead_value_after_save').html("");
           
           parentDiv.find('.leadtypeupdate').css('display','none');
+
+          parentDiv.find('.elementor-control-updated_labels').css('display','block');
          
-            parentDiv.find(".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option:selected").each(function(){
+          parentDiv.find(".elementor-control-show_leadtypes > .elementor-control-content > .elementor-control-field > .elementor-control-input-wrapper > select > option:selected").each(function(){
                 
                   var data_value = {};
     
