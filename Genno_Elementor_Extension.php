@@ -78,6 +78,7 @@ register_activation_hook(__FILE__, function () {
         $sql = "CREATE TABLE {$wpdb->prefix}leadtype_form_save_elementor (
             id mediumint(8) unsigned not null auto_increment,
             post_id mediumint(8) unsigned not null,
+            item_id mediumint(8) unsigned not null,
             is_active tinyint(1),
             lead_values varchar(255),
             lead_label  varchar(255),
@@ -86,7 +87,7 @@ register_activation_hook(__FILE__, function () {
        dbDelta($sql);
 
        $lead_save_table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
-       ADD COLUMN folder_id int(11)";
+       ADD COLUMN folder_id int(11),item_id mediumint(8) unsigned not null";
 
        $wpdb->query($lead_save_table);
     }
