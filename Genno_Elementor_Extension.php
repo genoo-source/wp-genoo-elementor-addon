@@ -81,10 +81,17 @@ register_activation_hook(__FILE__, function () {
             is_active tinyint(1),
             lead_values varchar(255),
             lead_label  varchar(255),
-            PRIMARY KEY  (id))";
+            folder_id int(11), PRIMARY KEY(id));";
+            
        dbDelta($sql);
 
-   }
+       $lead_save_table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
+       ADD COLUMN folder_id int(11)";
+
+       $wpdb->query($lead_save_table);
+    }
+
+   
 });
 
 //add form,cta,survey widgets in elementor categories.
