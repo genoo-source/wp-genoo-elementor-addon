@@ -87,9 +87,14 @@ register_activation_hook(__FILE__, function () {
        dbDelta($sql);
 
        $lead_save_table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
-       ADD COLUMN folder_id int(11),item_id varchar(255)";
-
+       ADD COLUMN `folder_id` int(11) UNSIGNED AFTER `lead_label`";
+       
+       $item_id_store = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
+       ADD COLUMN `item_id` varchar(255) UNSIGNED AFTER `post_id`";
+       
        $wpdb->query($lead_save_table);
+       
+       $wpdb->query($item_id_store);
     }
 
    
