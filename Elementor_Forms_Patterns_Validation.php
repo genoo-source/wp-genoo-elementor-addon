@@ -54,7 +54,10 @@ class Elementor_Forms_Patterns_Validation
         if (is_wp_error($control_data)) {
             return;
         }
-        $map_fields = array_keys($this->map_fields());
+        
+        if(is_array($this->map_fields())){
+           $map_fields = array_keys($this->map_fields());
+	}
         // create a new class control as a repeater field
         $tmp = new Elementor\Repeater();
 
