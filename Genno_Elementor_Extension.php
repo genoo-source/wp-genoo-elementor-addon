@@ -893,17 +893,18 @@ final class Genoo_Elementor_Extension
     public function adminEnqueueScripts($hook)
     {
         // scripts
+         $rannum = rand();
         wp_enqueue_script(
             'my_custom_script',
             plugin_dir_url(__FILE__) . 'file.js',
             [],
-            '1.0'
+            $rannum
         );
         wp_enqueue_style(
             'my_custom_style',
             plugin_dir_url(__FILE__) . 'elementorcustom.css',
             [],
-            '1.0'
+            $rannum
         );
     }
 
