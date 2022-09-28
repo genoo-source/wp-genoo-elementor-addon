@@ -1,10 +1,17 @@
 == Genoo Elementor Extension Plugin ==
+
 Contributors: Genoo 
+
 Tags: email marketing automation, landing page builder, email marketing, lead generation, online marketing, CRM Requires at least: 4.6.0 
+
 Tested up to: 6.0.1 
+
 License: GPLv2 or later 
+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html 
+
 Stable tag: 1.4.5
+
 
 Combine the power of Elementor plugin builder with the power of Genoo's marketing engine!
 
