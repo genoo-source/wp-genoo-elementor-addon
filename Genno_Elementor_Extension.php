@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.4.4
+ * Version:     1.4.5
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -26,7 +26,7 @@ wpme_genno_elementor_updater_init(__FILE__);
 
 register_activation_hook(__FILE__, function () {
     // Basic extension data
-   global $wpdb;
+    global $wpdb;
     $fileFolder = basename(dirname(__FILE__));
     $file = basename(__FILE__);
     $filePlugin = $fileFolder . DIRECTORY_SEPARATOR . $file;
@@ -35,8 +35,8 @@ register_activation_hook(__FILE__, function () {
     $isGenoo = false;
     // Get api / repo
     if (
-        class_exists('\WPME\ApiFactory') &&
-        class_exists('\WPME\RepositorySettingsFactory')
+    class_exists('\WPME\ApiFactory') &&
+    class_exists('\WPME\RepositorySettingsFactory')
     ) {
         $activate = true;
         $repo = new \WPME\RepositorySettingsFactory();
@@ -44,17 +44,19 @@ register_activation_hook(__FILE__, function () {
         if (class_exists('\Genoo\Api')) {
             $isGenoo = true;
         }
-    } elseif (
-        class_exists('\Genoo\Api') &&
-        class_exists('\Genoo\RepositorySettings')
+    }
+    elseif (
+    class_exists('\Genoo\Api') &&
+    class_exists('\Genoo\RepositorySettings')
     ) {
         $activate = true;
         $repo = new \Genoo\RepositorySettings();
         $api = new \Genoo\Api($repo);
         $isGenoo = true;
-    } elseif (
-        class_exists('\WPMKTENGINE\Api') &&
-        class_exists('\WPMKTENGINE\RepositorySettings')
+    }
+    elseif (
+    class_exists('\WPMKTENGINE\Api') &&
+    class_exists('\WPMKTENGINE\RepositorySettings')
     ) {
         $activate = true;
         $repo = new \WPMKTENGINE\RepositorySettings();
@@ -62,18 +64,20 @@ register_activation_hook(__FILE__, function () {
     }
     // 1. First protectoin, no WPME or Genoo plugin
     if ($activate == false && $isGenoo == false) { ?>
-  
-<div class="alert">
-<p style="font-family:Segoe UI;font-size:14px;">This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate</p>
-</div>
-    <?php
-    die();
 
-    genoo_wpme_deactivate_plugin(
-        $filePlugin,
-        'This extension requires WPMktgEngine or Genoo plugin to work with.'
-    );
-    } else {
+<div class="alert">
+    <p style="font-family:Segoe UI;font-size:14px;">This plugin requires the WPMKtgEngine or Genoo plugin installed
+        before order to activate</p>
+</div>
+<?php
+        die();
+
+        genoo_wpme_deactivate_plugin(
+            $filePlugin,
+            'This extension requires WPMktgEngine or Genoo plugin to work with.'
+        );
+    }
+    else {
 
         $sql = "CREATE TABLE {$wpdb->prefix}leadtype_form_save_elementor (
             id mediumint(8) unsigned not null auto_increment,
@@ -83,21 +87,22 @@ register_activation_hook(__FILE__, function () {
             lead_values varchar(255),
             lead_label  varchar(255),
             folder_id int(11), PRIMARY KEY(id));";
-            
-       dbDelta($sql);
 
-       $lead_save_table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
+        dbDelta($sql);
+
+        $lead_save_table = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
        ADD COLUMN `folder_id` int(11) UNSIGNED AFTER `lead_label`";
-       
-       $item_id_store = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
+
+        $item_id_store = "ALTER TABLE {$wpdb->prefix}leadtype_form_save_elementor
        ADD COLUMN `item_id` varchar(255) UNSIGNED AFTER `post_id`";
-       
-       $wpdb->query($lead_save_table);
-       
-       $wpdb->query($item_id_store);
+
+        $wpdb->query($lead_save_table);
+
+        $wpdb->query($item_id_store);
     }
 
-   
+
+
 });
 
 //add form,cta,survey widgets in elementor categories.
@@ -118,18 +123,19 @@ add_action(
     'wpmktengine_init',
     function ($repositarySettings, $api, $cache) {
         /**
-    
+     
      * Add extensions to the Extensions list
-    
+     
      */
         add_filter(
             'wpmktengine_tools_extensions_widget',
             function ($array) {
-                $array['Genoo Elementor Extension'] =
-                    '<span style="color:green">Active</span>';
+            $array['Genoo Elementor Extension'] =
+                '<span style="color:green">Active</span>';
 
-                return $array;
-            },
+            return $array;
+        }
+            ,
             10,
             1
         );
@@ -156,72 +162,73 @@ add_filter(
     'elementor_pro/forms/render/item/select',
     function ($item, $index, $form) {
 
-        global $wpdb,$post;
+        global $wpdb, $post;
 
-       $formvalue = $item['_id'];
+        $formvalue = $item['_id'];
 
-        
 
-      if ($item['third_party_input'] == 'leadtypes') {
 
-            $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+        if ($item['third_party_input'] == 'leadtypes') {
 
-     
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='".$formvalue."'");
+            $table_Setup = $wpdb->prefix . "leadtype_form_save_elementor";
+
+
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='" . $formvalue . "'");
 
             $values = array();
 
 
             foreach ($leadtypes as $leadtype) {
-            
-                $values[] = "$leadtype->lead_label|$leadtype->lead_values"; 
+
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values";
             }
 
-        $valuetests = implode("\n", $values);
-        
+            $valuetests = implode("\n", $values);
+
             $empty = '';
-         
-            $item['field_options'] =  "$empty|\n$valuetests";
-         
+
+            $item['field_options'] = "$empty|\n$valuetests";
+
         }
-     
+
         return $item;
 
-      
+
     },
     10,
     3
-); 
+);
+
 
 add_filter(
     'elementor_pro/forms/render/item/checkbox',
-    function ($item, $index, $form) {
-        global $wpdb,$post;
+        function ($item, $index, $form) {
+        global $wpdb, $post;
 
-     
+
 
         if ($item['third_party_input'] == 'leadtypes') {
-           
+
             $values = array();
 
-         $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+            $table_Setup = $wpdb->prefix . "leadtype_form_save_elementor";
 
-         $formvalue = $item['_id'];
+            $formvalue = $item['_id'];
 
-        
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='".$formvalue."'");
+
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='" . $formvalue . "'");
 
             foreach ($leadtypes as $leadtype) {
-            
-                $values[] = "$leadtype->lead_label|$leadtype->lead_values"; 
+
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values";
             }
-        
+
             $valuetests = implode("\n", $values);
 
-         
+
 
             $item['field_options'] = "$valuetests";
-        
+
         }
         return $item;
     },
@@ -230,29 +237,29 @@ add_filter(
 );
 add_filter(
     'elementor_pro/forms/render/item/radio',
-    function ($item, $index, $form) {
-        global $wpdb,$post;
+        function ($item, $index, $form) {
+        global $wpdb, $post;
 
-      if ($item['third_party_input'] == 'leadtypes') {
-          
+        if ($item['third_party_input'] == 'leadtypes') {
+
             $values = array();
-           
-            $table_Setup = $wpdb->prefix."leadtype_form_save_elementor";
+
+            $table_Setup = $wpdb->prefix . "leadtype_form_save_elementor";
 
             $formvalue = $item['_id'];
 
-        
-            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='".$formvalue."'");
+
+            $leadtypes = $wpdb->get_results("select * from $table_Setup where `post_id`=$post->ID and `item_id`='" . $formvalue . "'");
 
             foreach ($leadtypes as $leadtype) {
-            
-                $values[] = "$leadtype->lead_label|$leadtype->lead_values"; 
+
+                $values[] = "$leadtype->lead_label|$leadtype->lead_values";
             }
 
             $valuetests = implode("\n", $values);
 
             $item['field_options'] = "$valuetests";
-          
+
         }
 
         return $item;
@@ -266,7 +273,7 @@ add_filter(
 // formsubmit for lead
 add_action(
     'elementor_pro/forms/new_record',
-    function ($record, $ajax_handler) {
+        function ($record, $ajax_handler) {
         global $post, $WPME_API;
         $form_name = $record->get_form_settings('form_name');
         $settings = $record->get('form_settings');
@@ -305,9 +312,9 @@ add_action(
             foreach ($raw_fields as $id => $field) {
                 $fields[$id] = $field['value'];
             }
-           $selected_submission_values = [];
+            $selected_submission_values = [];
             foreach ($custom_ids as $custom_values) {
-                
+
                 foreach ($fields as $key => $val) {
                     if ($custom_values['custom_id'] == $key):
                         if ($custom_values['third_party_input'] != ''):
@@ -324,7 +331,7 @@ add_action(
                                 $date = date_format($date, 'Y-m-d');
                                 $selectvalues[
                                     $custom_values['third_party_input']
-                                ] = $date . 'T' . '00:00:00+00:00';
+                                    ] = $date . 'T' . '00:00:00+00:00';
                                 update_post_meta(
                                     $post->ID,
                                     $custom_values['third_party_input'],
@@ -340,11 +347,11 @@ add_action(
                                 );
                                 $selectvalues[
                                     $custom_values['third_party_input']
-                                ] = $date;
+                                    ] = $date;
                             elseif ($custom_values['field_type'] == 'radio'):
                                 $selectvalues[
                                     $custom_values['third_party_input']
-                                ] = '1';
+                                    ] = '1';
                                 $selected_submission_values[] = $val;
                                 update_post_meta(
                                     $post->ID,
@@ -355,17 +362,17 @@ add_action(
                                 $spliting_option_values = explode(',', $val);
                                 $selectvalues[
                                     $custom_values['third_party_input']
-                                ] = '1';
-                                foreach($spliting_option_values as $spliting_option_value){
-                                $selected_submission_values[] = $spliting_option_value;
-                                   }
+                                    ] = '1';
+                                foreach ($spliting_option_values as $spliting_option_value) {
+                                    $selected_submission_values[] = $spliting_option_value;
+                                }
                                 update_post_meta(
                                     $post->ID,
                                     $custom_values['third_party_input'],
                                     '1'
                                 );
-                                
-                            elseif($custom_values['field_type'] == 'select'):
+
+                            elseif ($custom_values['field_type'] == 'select'):
                                 $selected_submission_values[] = $val;
                             else:
                                 update_post_meta(
@@ -375,7 +382,7 @@ add_action(
                                 );
                                 $selectvalues[
                                     $custom_values['third_party_input']
-                                ] = $val;
+                                    ] = $val;
                             endif;
                         else:
                             if ($custom_values['custom_id'] == 'name'):
@@ -399,7 +406,7 @@ add_action(
                             else:
                                 $selectvalues[
                                     $custom_values['custom_id']
-                                ] = $val;
+                                    ] = $val;
                                 update_post_meta(
                                     $post->ID,
                                     $custom_values['custom_id'],
@@ -410,7 +417,7 @@ add_action(
                     endif;
                 }
             }
-           //  
+            //  
             if (method_exists($WPME_API, 'callCustom')):
                 try {
                     $response = $WPME_API->callCustom(
@@ -418,36 +425,37 @@ add_action(
                         'POST',
                         $selectvalues
                     );
-                    
-                
-                    if ($WPME_API->http->getResponseCode() == 204):
-                        // No values based on folderdid onchange! Ooops
 
+
+                    if ($WPME_API->http->getResponseCode() == 204):
+                    // No values based on folderdid onchange! Ooops
+    
 
                     elseif ($WPME_API->http->getResponseCode() == 200):
                     endif;
-                } catch (Exception $e) {
+                }
+                catch (Exception $e) {
 
                     if ($WPME_API->http->getResponseCode() == 404):
 
 
-                        // Looks like leadfields not found
+                    // Looks like leadfields not found
                     endif;
                 }
             endif;
 
             $genoo_ids = $response->genoo_id;
-             
+
             foreach ($selected_submission_values as $lead_value):
-                      
-                        $WPME_API->setLeadUpdate(
-                            $genoo_ids,
-                            $lead_value,
-                            $selectvalues['email'],
-                            $selectvalues['first_name'],
-                            $selectvalues['last_name']
-                        );
-                    endforeach;
+
+                $WPME_API->setLeadUpdate(
+                    $genoo_ids,
+                    $lead_value,
+                    $selectvalues['email'],
+                    $selectvalues['first_name'],
+                    $selectvalues['last_name']
+                );
+            endforeach;
 
             setcookie(
                 '_gtld',
@@ -455,32 +463,34 @@ add_action(
                 time() + 10 * 365 * 24 * 60 * 60,
                 '/'
             );
-            else : 
-                 $ajax_handler->add_error_message( 'it was NEVER sent to the Genoo account' );
+        else:
+            $ajax_handler->add_error_message('it was NEVER sent to the Genoo account');
 
-            
+
         endif;
     },
     10,
     2
 );
-function custom_logs($message) { 
-    if(is_array($message)) { 
-        $message = json_encode($message); 
-    } 
-    $file = fopen("../custom_logs678.log","a"); 
-    echo fwrite($file, "\n" . date('Y-m-d h:i:s') . " :: " . $message); 
-    fclose($file); 
+function custom_logs($message)
+{
+    if (is_array($message)) {
+        $message = json_encode($message);
+    }
+    $file = fopen("../custom_logs678.log", "a");
+    echo fwrite($file, "\n" . date('Y-m-d h:i:s') . " :: " . $message);
+    fclose($file);
+
 }
 
 add_action('wp_head', 'myplugin_ajaxurls');
 function myplugin_ajaxurls()
 {
     echo '<script type="text/javascript">
-            var ajaxurl = "' .
-        admin_url('admin-ajax.php') .
+        var ajaxurl = "' .
+        admin_url('admin-ajax.php').
         '";
-            </script>';
+    </script>';
 }
 
 // define the elementor/db/before_save callback
@@ -490,7 +500,7 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
     global $WPME_API, $wpdb;
 
 
-    $datatable = $wpdb->prefix."leadtype_form_save_elementor";
+    $datatable = $wpdb->prefix . "leadtype_form_save_elementor";
     //   if(!empty($editor_data)):
 
     foreach ($editor_data as $elementorcode) {
@@ -501,14 +511,14 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
             $code_ids = [];
 
             foreach ($code['elements'] as $codeset) {
-             
+
                 $values['form_name'] = $codeset['settings']['form_name'];
 
                 $values['form_type'] = 'EF';
 
                 $code_id['id'] = $codeset['id'];
 
-                
+
 
                 $get_values = get_post_meta(
                     $post_id,
@@ -518,7 +528,8 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
 
                 if ($get_values == '') {
                     $values['form_id'] = '0';
-                } else {
+                }
+                else {
                     $values['form_id'] = $get_values;
                 }
 
@@ -526,7 +537,7 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
 
                 $code_ids[] = $codeset['id'];
 
-            
+
 
             }
         }
@@ -562,18 +573,19 @@ function custom_elementor_db_after_save($post_id, array $editor_data)
                     );
 
                     if ($WPME_API->http->getResponseCode() == 204):
-                        // No values based on form name,form id onchange! Ooops
+                    // No values based on form name,form id onchange! Ooops
 
 
                     elseif ($WPME_API->http->getResponseCode() == 200):
                         delete_post_meta($post_id, 'code_' . $coding_id);
                         delete_post_meta($post_id, $form_id);
                     endif;
-                } catch (Exception $e) {
+                }
+                catch (Exception $e) {
                     if ($WPME_API->http->getResponseCode() == 404):
 
 
-                        // Looks like formname or form id not found
+                    // Looks like formname or form id not found
                     endif;
                 }
             endif;
@@ -605,7 +617,7 @@ function update_function($values, $post_id, $code_id)
             );
 
             if ($WPME_API->http->getResponseCode() == 204):
-                // No values based on form name, form id onchange! Ooops
+            // No values based on form name, form id onchange! Ooops
 
 
             elseif ($WPME_API->http->getResponseCode() == 200):
@@ -635,11 +647,12 @@ function update_function($values, $post_id, $code_id)
                     );
                 endif;
             endif;
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             if ($WPME_API->http->getResponseCode() == 404):
 
 
-                // Looks like formname or form id not found
+            // Looks like formname or form id not found
             endif;
         }
     endif;
@@ -685,7 +698,7 @@ function custom_post_delete_function($postid)
                         );
 
                         if ($WPME_API->http->getResponseCode() == 204):
-                            // No values based on form name,form id onchange! Ooops
+                        // No values based on form name,form id onchange! Ooops
 
 
                         elseif ($WPME_API->http->getResponseCode() == 200):
@@ -693,11 +706,12 @@ function custom_post_delete_function($postid)
 
                             delete_post_meta($postid, $form_id);
                         endif;
-                    } catch (Exception $e) {
+                    }
+                    catch (Exception $e) {
                         if ($WPME_API->http->getResponseCode() == 404):
 
 
-                            // Looks like formname or form id not found
+                        // Looks like formname or form id not found
                         endif;
                     }
                 endif;
@@ -784,7 +798,7 @@ final class Genoo_Elementor_Extension
         add_action('plugins_loaded', [$this, 'init']);
         add_action(
             'elementor/editor/after_enqueue_scripts',
-            [$this, 'adminEnqueueScripts'],
+        [$this, 'adminEnqueueScripts'],
             10
         );
         add_action('admin_init', [$this, 'adminEnqueueScripts']);
@@ -792,22 +806,22 @@ final class Genoo_Elementor_Extension
             $this,
             'leadtype_elementor_savelist',
         ]);
-          add_action('wp_ajax_select_lead_types_options', [
+        add_action('wp_ajax_select_lead_types_options', [
             $this,
             'select_lead_types_options',
         ]);
-             
-        add_action('wp_ajax_leadtype_elementor_change_savelist',[$this,'leadtype_elementor_change_savelist']);
-        
-        add_action('wp_ajax_leadtype_delete_option',[$this,'leadtype_delete_option']);
-        
-        add_action('wp_ajax_leadfolder_delete_option',[$this,'leadfolder_delete_option']);
 
-        add_action('wp_ajax_get_all_lead_types_options',[$this,'get_all_lead_types_options']);
+        add_action('wp_ajax_leadtype_elementor_change_savelist', [$this, 'leadtype_elementor_change_savelist']);
 
-     //   add_action('wp_ajax_leadtype_elementor_updatelist',[$this,'leadtype_elementor_updatelist']);
-        add_action('wp_ajax_get_leadtype_values',[$this,'get_leadtype_values']);
-        add_action('wp_ajax_select_option_items',[$this,'select_option_items']);
+        add_action('wp_ajax_leadtype_delete_option', [$this, 'leadtype_delete_option']);
+
+        add_action('wp_ajax_leadfolder_delete_option', [$this, 'leadfolder_delete_option']);
+
+        add_action('wp_ajax_get_all_lead_types_options', [$this, 'get_all_lead_types_options']);
+
+        //   add_action('wp_ajax_leadtype_elementor_updatelist',[$this,'leadtype_elementor_updatelist']);
+        add_action('wp_ajax_get_leadtype_values', [$this, 'get_leadtype_values']);
+        add_action('wp_ajax_select_option_items', [$this, 'select_option_items']);
     }
 
     /**
@@ -853,11 +867,11 @@ final class Genoo_Elementor_Extension
 
         // Check for required Elementor version
         if (
-            !version_compare(
-                ELEMENTOR_VERSION,
-                self::MINIMUM_ELEMENTOR_VERSION,
-                '>='
-            )
+        !version_compare(
+        ELEMENTOR_VERSION,
+        self::MINIMUM_ELEMENTOR_VERSION,
+        '>='
+        )
         ) {
             add_action('admin_notices', [
                 $this,
@@ -893,17 +907,17 @@ final class Genoo_Elementor_Extension
     public function adminEnqueueScripts($hook)
     {
         // scripts
-         $rannum = rand();
+        $rannum = rand();
         wp_enqueue_script(
             'my_custom_script',
             plugin_dir_url(__FILE__) . 'file.js',
-            [],
+        [],
             $rannum
         );
         wp_enqueue_style(
             'my_custom_style',
             plugin_dir_url(__FILE__) . 'elementorcustom.css',
-            [],
+        [],
             $rannum
         );
     }
@@ -926,18 +940,18 @@ final class Genoo_Elementor_Extension
         $message = sprintf(
             /* translators: 1: Plugin name 2: Elementor */
             esc_html__(
-                '"%1$s" requires "%2$s" to be installed and activated.',
-                'genoo-elementor-extension'
-            ),
+            '"%1$s" requires "%2$s" to be installed and activated.',
+            'genoo-elementor-extension'
+        ),
             '<strong>' .
-                esc_html__(
-                    'Genoo Elementor Extension',
-                    'genoo-elementor-extension'
-                ) .
-                '</strong>',
+            esc_html__(
+            'Genoo Elementor Extension',
+            'genoo-elementor-extension'
+        ) .
+            '</strong>',
             '<strong>' .
-                esc_html__('Elementor', 'genoo-elementor-extension') .
-                '</strong>'
+            esc_html__('Elementor', 'genoo-elementor-extension') .
+            '</strong>'
         );
 
         printf(
@@ -945,24 +959,23 @@ final class Genoo_Elementor_Extension
             $message
         );
     }
-    
+
     public function select_option_items()
     {
         global $wpdb;
         $get_item_id = $_REQUEST['item_id'];
         $get_post_id = $_REQUEST['post_id'];
-        
-        $get_select_option_items =  $wpdb->get_results("select `lead_label`,`lead_values` from `item_id`=$get_item_id and `post_id`=$get_post_id");
-        
-           $get_select_option_item_array = [];
-        foreach($get_select_option_items as $get_select_option_item)
-        {
+
+        $get_select_option_items = $wpdb->get_results("select `lead_label`,`lead_values` from `item_id`=$get_item_id and `post_id`=$get_post_id");
+
+        $get_select_option_item_array = [];
+        foreach ($get_select_option_items as $get_select_option_item) {
             $get_select_option_item_array[$get_select_option_item->lead_values] = $get_select_option_item->lead_label;
         }
-        
+
         wp_send_json($get_select_option_item_array);
-        
-        
+
+
     }
 
     /**
@@ -983,18 +996,18 @@ final class Genoo_Elementor_Extension
         $message = sprintf(
             /* translators: 1: Plugin name 2: Elementor 3: Required Elementor version */
             esc_html__(
-                '"%1$s" requires "%2$s" version %3$s or greater.',
-                'genoo-elementor-extension'
-            ),
+            '"%1$s" requires "%2$s" version %3$s or greater.',
+            'genoo-elementor-extension'
+        ),
             '<strong>' .
-                esc_html__(
-                    'Genoo Elementor Extension',
-                    'genoo-elementor-extension'
-                ) .
-                '</strong>',
+            esc_html__(
+            'Genoo Elementor Extension',
+            'genoo-elementor-extension'
+        ) .
+            '</strong>',
             '<strong>' .
-                esc_html__('Elementor', 'genoo-elementor-extension') .
-                '</strong>',
+            esc_html__('Elementor', 'genoo-elementor-extension') .
+            '</strong>',
             self::MINIMUM_ELEMENTOR_VERSION
         );
 
@@ -1006,246 +1019,227 @@ final class Genoo_Elementor_Extension
     public function leadtype_elementor_savelist()
     {
         global $wpdb;
-    
+
         $checkboxdetails = $_REQUEST['check_after_values'];
 
         $post_id = $_REQUEST['post_id'];
         $form_id = $_REQUEST['item_id'];
-       
-        
-        $table = $wpdb->prefix . 'leadtype_form_save_elementor';
-        
-        $wpdb->delete($table,['post_id' => $post_id,'item_id' => $form_id]);
-       
 
-    foreach ($checkboxdetails as $checkboxdetail) {
-          $string = $checkboxdetail["labelvalue"];
-          
-          $lead_type_store =  explode("#", $string);
-          
-            if($lead_type_store[1]!='')
-             {
-               $get_lead_type_id =  $lead_type_store[1];
-             }
-             else
-             {
-               $get_lead_type_id =  $lead_type_store[0];   
-             }
-          
-        $result = explode("-", $get_lead_type_id);
-        
-         $labelvalue = $result[1];
-         
-         $wpdb->insert($table, [
+
+        $table = $wpdb->prefix . 'leadtype_form_save_elementor';
+
+        $wpdb->delete($table, ['post_id' => $post_id, 'item_id' => $form_id]);
+
+
+        foreach ($checkboxdetails as $checkboxdetail) {
+            $string = $checkboxdetail["labelvalue"];
+
+            $lead_type_store = explode("#", $string);
+
+            if ($lead_type_store[1] != '') {
+                $get_lead_type_id = $lead_type_store[1];
+            }
+            else {
+                $get_lead_type_id = $lead_type_store[0];
+            }
+
+            $result = explode("-", $get_lead_type_id);
+
+            $labelvalue = $result[1];
+
+            $wpdb->insert($table, [
                 'post_id' => $post_id,
                 'lead_values' => $labelvalue,
                 'folder_id' => $result[0],
                 'lead_label' => stripslashes($checkboxdetail['label']),
                 'item_id' => $form_id
-            ]); 
-   
-           
+            ]);
+
+
         }
-       
+
     }
     public function get_all_lead_types_options()
     {
         global $wpdb;
-          $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
-         $post_id = $_REQUEST['post_id'];
+        $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
+        $post_id = $_REQUEST['post_id'];
         $form_id = $_REQUEST['item_id'];
-        
-    
-        
+
+
+
         $leadTypes = $wpdb->get_results(
-        "select `lead_label`,`lead_values`,`folder_id` from $leadtype_form_save where item_id='$form_id' and post_id=$post_id order by id"
-    );
+            "select `lead_label`,`lead_values`,`folder_id` from $leadtype_form_save where item_id='$form_id' and post_id=$post_id order by id"
+        );
 
-    foreach ($leadTypes as $leadType) {
-        $lead_results[$leadType->folder_id . "-" . $leadType->lead_values] =
-            $leadType->lead_label;
+        foreach ($leadTypes as $leadType) {
+            $lead_results[$leadType->folder_id . "-" . $leadType->lead_values] =
+                $leadType->lead_label;
+        }
+
+        wp_send_json($lead_results);
     }
 
-    wp_send_json($lead_results);
-    }
-    
     public function leadfolder_delete_option()
     {
-       global $WPME_API,$wpdb;
-       
-         $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
-          
-         $post_id = $_REQUEST['post_id'];
-         
-         $item_id = $_REQUEST['item_id'];  
-         
-         $lead_folder_id = $_REQUEST['delete_lead_folder_id'];
-         
-             $result = explode("#", $lead_folder_id);
-             
-             if($result[1]!='')
-             {
-               $lead_folder_id_value =  $result[1];
-             }
-             else
-             {
-               $lead_folder_id_value =  $result[0];   
-             }
-             
-           
-       
-         $wpdb->delete($leadtype_form_save,['post_id' => $post_id,'item_id' => $item_id,'folder_id' => $lead_folder_id_value]);
-        
-            $leadtypes_based_folder_id = [];
-            
-                 if (method_exists($WPME_API, 'callCustom')):
-                try {
-                    // Make a GET request, to Genoo / WPME api, for that rest endpoint
-    
-                       $leadTypesvalues = $WPME_API->callCustom('/leadtypes', 'GET', null);
-                       
-                       foreach($leadTypesvalues as $leadTypesvalue)
-                       {
-                           if($lead_folder_id_value == $leadTypesvalue->folder_id)
-                           {
-                            $leadtypes_based_folder_id[$leadTypesvalue->folder_id.'-'.$leadTypesvalue->id] =   $leadTypesvalue->name; 
-                           }
-                       }
-                } catch (Exception $e) {
-                    if ($WPME_API->http->getResponseCode() == 404):
-                       // Looks like folders not found
-                    endif;
-                }
-            endif;
-        wp_send_json($leadtypes_based_folder_id);
-    }
-public function select_lead_types_options()
-{
-    global $WPME_API;
-    
-    $select_lead_folder_id = $_REQUEST['select_lead_folder_id'];
-    
-       if (method_exists($WPME_API, 'callCustom')):
+        global $WPME_API, $wpdb;
+
+        $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
+
+        $post_id = $_REQUEST['post_id'];
+
+        $item_id = $_REQUEST['item_id'];
+
+        $lead_folder_id = $_REQUEST['delete_lead_folder_id'];
+
+        $result = explode("#", $lead_folder_id);
+
+        if ($result[1] != '') {
+            $lead_folder_id_value = $result[1];
+        }
+        else {
+            $lead_folder_id_value = $result[0];
+        }
+
+
+
+        $wpdb->delete($leadtype_form_save, ['post_id' => $post_id, 'item_id' => $item_id, 'folder_id' => $lead_folder_id_value]);
+
+        $leadtypes_based_folder_id = [];
+
+        if (method_exists($WPME_API, 'callCustom')):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
 
-                   $leadTypesvalues = $WPME_API->callCustom('/leadtypes', 'GET', null);
-                    $get_folders = $WPME_API->callCustom(
-                                "/listLeadTypeFolders/Uncategorized",
-                                "GET",
-                                "NULL"
-                            );
+                $leadTypesvalues = $WPME_API->callCustom('/leadtypes', 'GET', null);
 
-                            foreach ($get_folders as $get_folder):
-                                $folder_names[0] = "Uncategorized";
-                                $folder_names[$get_folder->type_id] =
-                                    $get_folder->name;
-                                foreach (
-                                    $get_folder->child_folders
-                                    as $child_folders
-                                ):
-                                    if (
-                                        $child_folders->parent_id ==
-                                        $get_folder->type_id
-                                    ) {
-                                        $folder_names[$child_folders->type_id] =
-                                            "--" . $child_folders->name;
-                                    }
-                                endforeach;
-                            endforeach;
-            } catch (Exception $e) {
+                foreach ($leadTypesvalues as $leadTypesvalue) {
+                    if ($lead_folder_id_value == $leadTypesvalue->folder_id) {
+                        $leadtypes_based_folder_id[$leadTypesvalue->folder_id . '-' . $leadTypesvalue->id] = $leadTypesvalue->name;
+                    }
+                }
+            }
+            catch (Exception $e) {
+                if ($WPME_API->http->getResponseCode() == 404):
+                // Looks like folders not found
+                endif;
+            }
+        endif;
+        wp_send_json($leadtypes_based_folder_id);
+    }    public function select_lead_types_options()    {
+        global $WPME_API;
+
+        $select_lead_folder_id = $_REQUEST['select_lead_folder_id'];
+
+        if (method_exists($WPME_API, 'callCustom')):
+            try {
+                // Make a GET request, to Genoo / WPME api, for that rest endpoint
+
+                $leadTypesvalues = $WPME_API->callCustom('/leadtypes', 'GET', null);
+                $get_folders = $WPME_API->callCustom(
+                    "/listLeadTypeFolders/Uncategorized",
+                    "GET",
+                    "NULL"
+                );
+
+                foreach ($get_folders as $get_folder):
+                    $folder_names[0] = "Uncategorized";
+                    $folder_names[$get_folder->type_id] =
+                        $get_folder->name;
+                    foreach (
+                    $get_folder->child_folders
+                     as $child_folders
+                    ):
+                        if (
+                        $child_folders->parent_id ==
+                        $get_folder->type_id
+                        ) {
+                            $folder_names[$child_folders->type_id] =
+                                "--" . $child_folders->name;
+                        }
+                    endforeach;
+                endforeach;
+            }
+            catch (Exception $e) {
                 if ($WPME_API->http->getResponseCode() == 404):
 
 
-                    // Looks like folders not found
+                // Looks like folders not found
                 endif;
             }
-        endif; 
-        
+        endif;
+
         $select_lead_folder_id_value = [];
-        
-        foreach($select_lead_folder_id as $select_lead_folder_id_value_option)
-        {
-              $result = explode("#", $select_lead_folder_id_value_option);
-             
-             if($result[1]!='')
-             {
-               $select_lead_folder_id_value[] =  $result[1];
-             }
-             else
-             {
-               $select_lead_folder_id_value[] =  $result[0];   
-             }
-        }
-               
-        foreach($leadTypesvalues as $leadTypesvalue)
-        {
-            foreach($folder_names as $key => $foldervalue){   
-           if(in_array($leadTypesvalue->folder_id,$select_lead_folder_id_value)):
-               
-                 if($key==$leadTypesvalue->folder_id):
-           $leadTypesvalueset[$leadTypesvalue->folder_id.'-'.$leadTypesvalue->id] =  $leadTypesvalue->name. "#(" . $foldervalue . ")";
-           endif;
-           endif;
+
+        foreach ($select_lead_folder_id as $select_lead_folder_id_value_option) {
+            $result = explode("#", $select_lead_folder_id_value_option);
+
+            if ($result[1] != '') {
+                $select_lead_folder_id_value[] = $result[1];
+            }
+            else {
+                $select_lead_folder_id_value[] = $result[0];
             }
         }
-        
-      
-        
-    wp_send_json($leadTypesvalueset);
-    
-}
-public function leadtype_delete_option()
-{
-    global $wpdb;
-$leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
-$get_delete_lead_type_id = $_REQUEST['delete_lead_type_id'];
-$post_id = $_REQUEST['post_id'];
-$item_id = $_REQUEST['item_id'];
-$get_delete_lead_type_ids = explode("-", $get_delete_lead_type_id);
-$folder_id = $get_delete_lead_type_ids[0];
-$lead_value = $get_delete_lead_type_ids[1];
 
- $wpdb->delete($leadtype_form_save,['post_id' => $post_id,'item_id' => $item_id,'lead_values' => $lead_value,'folder_id' => $folder_id]);
+        foreach ($leadTypesvalues as $leadTypesvalue) {
+            foreach ($folder_names as $key => $foldervalue) {
+                if (in_array($leadTypesvalue->folder_id, $select_lead_folder_id_value)):
 
-}
- public function leadtype_elementor_change_savelist()
- {
-         global $wpdb;
+                    if ($key == $leadTypesvalue->folder_id):
+                        $leadTypesvalueset[$leadTypesvalue->folder_id . '-' . $leadTypesvalue->id] = $leadTypesvalue->name . "#(" . $foldervalue . ")";
+                    endif;
+                endif;
+            }
+        }
+
+
+
+        wp_send_json($leadTypesvalueset);
+
     
+}    public function leadtype_delete_option()    {
+        global $wpdb;        $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';        $get_delete_lead_type_id = $_REQUEST['delete_lead_type_id'];        $post_id = $_REQUEST['post_id'];        $item_id = $_REQUEST['item_id'];        $get_delete_lead_type_ids = explode("-", $get_delete_lead_type_id);        $folder_id = $get_delete_lead_type_ids[0];        $lead_value = $get_delete_lead_type_ids[1];
+
+        $wpdb->delete($leadtype_form_save, ['post_id' => $post_id, 'item_id' => $item_id, 'lead_values' => $lead_value, 'folder_id' => $folder_id]);
+    }
+    public function leadtype_elementor_change_savelist()
+    {
+        global $wpdb;
+
         $post_id = $_REQUEST['post_id'];
         $item_id = $_REQUEST['item_id'];
         $checkboxdetails = $_REQUEST['check_after_values'];
         $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
 
         foreach ($checkboxdetails as $checkboxdetail) {
-            
-        $lead_label_value = $checkboxdetail['label'];
-        
-         $lead_label_option = explode("#(", $lead_label_value);
-             
-         $string = $checkboxdetail["labelvalue"];
-        
-        $result = explode("-", $string);
-        $labelvalue = $result[1];
-        $get_value = $wpdb->get_results(
-            "select * from $leadtype_form_save where `post_id`=$post_id and `item_id`='$item_id' and `lead_values`=$labelvalue");
-            
-       if(empty($get_value)){
-            
-            $wpdb->insert($leadtype_form_save, [
+
+            $lead_label_value = $checkboxdetail['label'];
+
+            $lead_label_option = explode("#(", $lead_label_value);
+
+            $string = $checkboxdetail["labelvalue"];
+
+            $result = explode("-", $string);
+            $labelvalue = $result[1];
+            $get_value = $wpdb->get_results(
+                "select * from $leadtype_form_save where `post_id`=$post_id and `item_id`='$item_id' and `lead_values`=$labelvalue");
+
+            if (empty($get_value)) {
+
+                $wpdb->insert($leadtype_form_save, [
                     'post_id' => $post_id,
-                    'lead_values' =>  $result[1],
+                    'lead_values' => $result[1],
                     'lead_label' => stripslashes($lead_label_option[0]),
                     'folder_id' => $result[0],
                     'item_id' => $item_id
-                ]); 
-             
-            
+                ]);
+
+
+            }
         }
-        }
-        
-         
+
+
     }
 
     /**
@@ -1266,18 +1260,18 @@ $lead_value = $get_delete_lead_type_ids[1];
         $message = sprintf(
             /* translators: 1: Plugin name 2: PHP 3: Required PHP version */
             esc_html__(
-                '"%1$s" requires "%2$s" version %3$s or greater.',
-                'genoo-elementor-extension'
-            ),
+            '"%1$s" requires "%2$s" version %3$s or greater.',
+            'genoo-elementor-extension'
+        ),
             '<strong>' .
-                esc_html__(
-                    'Genoo Elementor Extension',
-                    'genoo-elementor-extension'
-                ) .
-                '</strong>',
+            esc_html__(
+            'Genoo Elementor Extension',
+            'genoo-elementor-extension'
+        ) .
+            '</strong>',
             '<strong>' .
-                esc_html__('PHP', 'genoo-elementor-extension') .
-                '</strong>',
+            esc_html__('PHP', 'genoo-elementor-extension') .
+            '</strong>',
             self::MINIMUM_PHP_VERSION
         );
 
