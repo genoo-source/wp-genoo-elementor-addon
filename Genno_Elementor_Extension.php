@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Genoo Elementor Extension
- * Description:  This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
+ * Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
  * Version:     1.4.5
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
