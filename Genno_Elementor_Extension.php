@@ -98,8 +98,6 @@ register_activation_hook(__FILE__, function () {
         $wpdb->query($item_id_store);
     }
 
-
-
 });
 
 //add form,cta,survey widgets in elementor categories.
@@ -189,22 +187,15 @@ add_filter(
         }
 
         return $item;
-
-
     },
     10,
     3
 );
-
-
 add_filter(
     'elementor_pro/forms/render/item/checkbox',
         function ($item, $index, $form) {
         global $wpdb, $post;
-
-
-
-        if ($item['third_party_input'] == 'leadtypes') {
+      if ($item['third_party_input'] == 'leadtypes') {
 
             $values = array();
 

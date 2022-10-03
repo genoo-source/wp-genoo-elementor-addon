@@ -10,8 +10,7 @@ use WPME\CacheFactory;
 use WPME\RepositoryFactory;
 use WPME\Extensions\RepositorySurveys;
 class Survey_Widget extends \Elementor\Widget_Base {
-
-    /**
+     /**
      * Get widget name.
      *
      * Retrieve oEmbed widget name.
@@ -25,8 +24,7 @@ public function get_name()
 {
     return 'Survey';
 }
-
-    /**
+ /**
      * Get widget title.
      *
      * Retrieve oEmbed widget title.
@@ -40,8 +38,7 @@ public function get_title()
 {
    return __( 'Survey', 'Genoo Elementor Extension' );
 }
-
-    /**
+/**
      * Get widget icon.
      *
      * Retrieve oEmbed widget icon.
@@ -55,8 +52,7 @@ public function get_icon()
 {
     return 'fa fa-poll';
 }
-
-    /**
+ /**
      * Get widget categories.
      *
      * Retrieve the list of categories the oEmbed widget belongs to.
@@ -82,8 +78,6 @@ public static function getsurvey()
     new Surveys($repositorySettings)
     );
     $val= $repositorySurveys->getSurveysArrayTinyMCE();
-
-  
     $survey = array();
     foreach($val as $value)
     {
@@ -100,8 +94,7 @@ public static function getsurvey()
     return $survey;
         
 }
-
-    /**
+ /**
      * Register survey widget controls.
      *
      * Adds different input fields to allow the user to change and customize the widget settings.
@@ -112,9 +105,6 @@ public static function getsurvey()
 protected function _register_controls() 
 {
     $getsurveyoption = array_keys($this->getsurvey());
-
-
-    
     $this->start_controls_section(
         'content_section',
          [
@@ -140,14 +130,9 @@ protected function _register_controls()
 			'default' => '',
 		]
 		);
-
-        
     $this->end_controls_section();
-      
-
-}
-    
- /**
+ }
+    /**
      * Render survey widget output on the frontend.
       *
      * Written in PHP and used to generate the final HTML.
@@ -157,26 +142,21 @@ protected function _register_controls()
      */
 protected function render() 
 {
-   
-    $survey_list = $this->get_settings('survey_list');
+  $survey_list = $this->get_settings('survey_list');
     if($this->get_settings('survey_list') != '')
-    {    
+    {  
         if(GENOO_SETUP)
         {
-            $shortcodes = '[genooSurvey id="'.$survey_list.'"]';
+        $shortcodes = '[genooSurvey id="'.$survey_list.'"]';
         }
         else{
-         
-        $shortcodes = '[WPMKTENGINESurvey id="'.$survey_list.'"]';
+         $shortcodes = '[WPMKTENGINESurvey id="'.$survey_list.'"]';
         }
-    
-        $shortcode = do_shortcode( shortcode_unautop($shortcodes));
+       $shortcode = do_shortcode( shortcode_unautop($shortcodes));
         ?>
     <div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 <?php
 }
 }
-
-
 }
  
