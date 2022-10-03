@@ -195,7 +195,7 @@ add_filter(
     'elementor_pro/forms/render/item/checkbox',
         function ($item, $index, $form) {
         global $wpdb, $post;
-        if ($item['third_party_input'] == 'leadtypes') {
+      if ($item['third_party_input'] == 'leadtypes') {
 
             $values = array();
 
@@ -476,7 +476,7 @@ function myplugin_ajaxurls()
 {
     echo '<script type="text/javascript">
         var ajaxurl = "' .
-        admin_url('admin-ajax.php') .
+        admin_url('admin-ajax.php').
         '";
     </script>';
 }
@@ -1114,9 +1114,7 @@ final class Genoo_Elementor_Extension
             }
         endif;
         wp_send_json($leadtypes_based_folder_id);
-    }
-    public function select_lead_types_options()
-    {
+    }    public function select_lead_types_options()    {
         global $WPME_API;
 
         $select_lead_folder_id = $_REQUEST['select_lead_folder_id'];

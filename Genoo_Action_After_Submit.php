@@ -380,9 +380,10 @@ class Genoo_Action_After_Submit extends
 
         return $zoomwebinarslead;
     }
-  //function for getting leadtypes
-  public static function getleadtypes()
-    {
+
+//function for getting leadtypes
+public static function getleadtypes()
+{
         global $WPME_API, $post;
         //getting api response for leadtypes,
         $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
@@ -392,6 +393,14 @@ class Genoo_Action_After_Submit extends
                 $data = $decode_data->elements;
                 foreach ( $data as $dataelement ) {
                 $data_elements_value = $dataelement->elements;
+
+                    foreach ( $data_elements_value as $elements_value ) {
+
+                        $dataleadtypefolder = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
+                        $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
+
+                        if (method_exists($WPME_API, 'callCustom')):
+                    $data_elements_value = $dataelement->elements;
                   foreach ( $data_elements_value as $elements_value ) {
                     $dataleadtypefolder_id = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
                         $result = explode("#", $dataleadtypefolder_id);
@@ -406,7 +415,7 @@ class Genoo_Action_After_Submit extends
                     $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
 
                     if (method_exists($WPME_API, 'callCustom')):
-                            try {
+                         try {
                                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
                                 $leadtypes[0] = 'Select Lead Types';
                                 $leadtypes[1] = '------------------';
@@ -436,8 +445,8 @@ class Genoo_Action_After_Submit extends
                     }
                 }
             }
-             // Make a GET request, to Genoo / WPME api, for that rest endpoint
-            // Looks like folders not found
+           // Make a GET request, to Genoo / WPME api, for that rest endpoint
+           // Looks like folders not found
         else:
             if (method_exists($WPME_API, 'callCustom')):
                 try {
@@ -467,9 +476,8 @@ class Genoo_Action_After_Submit extends
     public function emaildata()
     {
         global $WPME_API;
-
         $id = $_REQUEST['selectid'];
-        //getting api response for email.
+       //getting api response for email.
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
@@ -489,9 +497,7 @@ class Genoo_Action_After_Submit extends
                 wp_send_json($emailtypes);
             } catch (Exception $e) {
                 if ($WPME_API->http->getResponseCode() == 404):
-
-
-                    // Looks like folders not found
+                  // Looks like folders not found
                 endif;
             }
         endif;

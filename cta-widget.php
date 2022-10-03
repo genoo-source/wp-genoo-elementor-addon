@@ -202,7 +202,12 @@ protected function render()
         }
        $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
 	?>
-	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
+<div class="elementor-shortcode">
+    <?php echo $shortcode; ?>
+</div>
 <?php
-}}}
+}
+}
+}
+
  
