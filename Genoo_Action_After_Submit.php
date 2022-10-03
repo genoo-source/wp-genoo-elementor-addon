@@ -294,13 +294,10 @@ class Genoo_Action_After_Submit extends
     }
 
     //function for geting leadtypes based on lead folderid
-
     public function sendleadfolder()
     {
         global $WPME_API;
-
         $lead_id = $_REQUEST['lead_folder_id'];
-
         //getting api response for leadtypes.
         if (method_exists($WPME_API, 'callCustom')):
             try {
@@ -317,9 +314,7 @@ class Genoo_Action_After_Submit extends
                 wp_send_json($leadtypes);
             } catch (Exception $e) {
                 if ($WPME_API->http->getResponseCode() == 404):
-
-
-                    // Looks like folders not found
+                // Looks like folders not found
                 endif;
             }
         endif;
@@ -385,45 +380,32 @@ class Genoo_Action_After_Submit extends
 
         return $zoomwebinarslead;
     }
-
-    //function for getting leadtypes
-
-    public static function getleadtypes()
+  //function for getting leadtypes
+  public static function getleadtypes()
     {
         global $WPME_API, $post;
         //getting api response for leadtypes,
-
-            $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
+        $elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
             if ( !empty( $elementor_data ) ):
             $decode_datas = json_decode( $elementor_data );
-
             foreach ( $decode_datas as $decode_data ) {
                 $data = $decode_data->elements;
-
                 foreach ( $data as $dataelement ) {
-
-                    $data_elements_value = $dataelement->elements;
-
-                    foreach ( $data_elements_value as $elements_value ) {
-
-                        $dataleadtypefolder_id = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
-                        
+                $data_elements_value = $dataelement->elements;
+                  foreach ( $data_elements_value as $elements_value ) {
+                    $dataleadtypefolder_id = isset($elements_value->settings->SelectLeadFolder) ?  $elements_value->settings->SelectLeadFolder  : '';
                         $result = explode("#", $dataleadtypefolder_id);
-                        
-                        
                         if($result[1]!='')
                         {
                         $dataleadtypefolder = $result[1];
                         }
-                      else
-                      {
+                        else
+                        {
                         $dataleadtypefolder = $result[0];
-                      }
-             
-                     
-                        $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
+                        }
+                    $dataleadtype = isset($elements_value->settings->SelectLeadType) ? $elements_value->settings->SelectLeadType : '';
 
-                        if (method_exists($WPME_API, 'callCustom')):
+                    if (method_exists($WPME_API, 'callCustom')):
                             try {
                                 // Make a GET request, to Genoo / WPME api, for that rest endpoint
                                 $leadtypes[0] = 'Select Lead Types';
@@ -479,8 +461,7 @@ class Genoo_Action_After_Submit extends
             endif;
             endif;
             return $leadtypes;
-
-        }
+          }
         //function for getting emails based on emailfolderid
 
     public function emaildata()
@@ -488,8 +469,7 @@ class Genoo_Action_After_Submit extends
         global $WPME_API;
 
         $id = $_REQUEST['selectid'];
-
-            //getting api response for email.
+        //getting api response for email.
             if ( method_exists( $WPME_API, 'callCustom' ) ):
             try {
                 // Make a GET request, to Genoo / WPME api, for that rest endpoint

@@ -10,7 +10,6 @@
 if (!defined('ABSPATH')) {
     exit(); // Exit if accessed directly.
 }
-
 /**
  * Main Genoo Elementor Extension
  *
@@ -19,11 +18,9 @@ if (!defined('ABSPATH')) {
  * @since 1.0.0
  */
 use Elementor\Plugin;
-
 require_once plugin_dir_path(__FILE__) . 'deploy/updater.php';
 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 wpme_genno_elementor_updater_init(__FILE__);
-
 register_activation_hook(__FILE__, function () {
     // Basic extension data
     global $wpdb;
