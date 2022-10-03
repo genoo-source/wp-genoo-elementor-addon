@@ -219,8 +219,15 @@ protected function render()
        
    if($this->get_settings('form_list') != '')
     {    
+        if(GENOO_SETUP)
+        {
+            $shortcodes = '[genooForm id="'.$form_list.'" theme="'.$theme.'" confirmation="'.$confirmation.'" msgSuccess="'.$success_message.'" msgFail="'.$error_message.'"]';
+        }
+        else{
+         
     $shortcodes = '[WPMKTENGINEForm id="'.$form_list.'" theme="'.$theme.'" confirmation="'.$confirmation.'" msgSuccess="'.$success_message.'" msgFail="'.$error_message.'"]';
     }
+}
 	$shortcode = do_shortcode( shortcode_unautop( $shortcodes ) ); ?>
     	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>    
     <?php
