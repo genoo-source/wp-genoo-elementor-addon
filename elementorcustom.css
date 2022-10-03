@@ -1,0 +1,133 @@
+.elementor-control-third_party_input .elementor-control-content .elementor-control-field {
+    flex-direction: column;
+    align-items: flex-start;
+}
+.elementor-control-third_party_input .elementor-control-content .elementor-control-field label.elementor-control-title {
+    margin-bottom: 5px;
+}
+.elementor-control-third_party_input .elementor-control-content .elementor-control-field .elementor-control-input-wrapper {
+    float: left;
+    width: 100%;
+}
+.elementor-control-updated_labels span.select2.select2-container {
+    pointer-events: none;
+}
+.elementor-control-updated_labels .select2-container.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+
+    display:none;
+}
+.append_lead_folders, .append_lead_types, .updatedlabels
+{
+   
+     float: left;
+    width: 100%;
+    height: auto;
+    border: solid 1px rgba(0,0,0,0.5);
+    min-height: 36px;
+    margin-bottom: 10px;
+    max-height: 150px;
+    overflow: auto;
+    padding: 0 5px;
+    border-radius: 3px;
+}
+
+.append_lead_folders span,.append_lead_types span,.updatedlabels span
+{
+    	float: left;
+	width: 100%;
+    line-height: 11px;
+	display: inline-block;
+   /* //line-height: 1;*/
+    vertical-align: baseline;
+    background-color: #e8e8e8;
+    background-image: none;
+    padding: 0.5833em 0.833em;
+    color: rgba(0,0,0,.6);
+    text-transform: none;
+    font-weight: 700;
+    border: 0 solid transparent;
+    border-radius: 0.28571429rem;
+    -webkit-transition: background .1s ease;
+    transition: background .1s ease;
+    margin: 2px 0px;
+    font-size:12px;
+}
+button.btn.btn-primary.saveleadtypeidset, .leadtypeupdate {
+    background-color: #a4afb7;
+    color: #fff;
+    font-size: 11px;
+    padding: 7px 21px;
+    border: none;
+    border-radius: 3px;
+}
+button.btn.btn-primary.saveleadtypeidset:hover, .leadtypeupdate:hover {
+    background-color: #6d7882;
+    -webkit-box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 2px 2px rgb(0 0 0 / 20%);
+    box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 2px 2px rgb(0 0 0 / 20%);
+}
+
+.checkbox_lead_values 
+   {
+       display:none;
+   }
+.elementor-control-SelectEmailfolder .elementor-control-content .elementor-control-field label
+{
+  font-weight: bold;
+}
+.elementor-control-SelectLeadFolder .elementor-control-content .elementor-control-field label
+{
+  font-weight: bold;
+}
+.elementor-control-SelectLeadType .elementor-control-content .elementor-control-field label
+{
+  font-weight: bold;
+}
+.elementor-control-SelectEmail .elementor-control-content .elementor-control-field label
+{
+ font-weight: bold;
+}
+.elementor-control-SelectWebinar .elementor-control-content .elementor-control-field label
+{
+ font-weight: bold;
+}
+.elementor-control-labelemailfolderitem .elementor-control-content span
+{
+ font-weight: bold;
+}
+.elementor-control-labelleadtypeitem .elementor-control-content span
+{
+ font-weight: bold;
+}
+.elementor-control-Source .elementor-control-content .elementor-control-field label
+{
+ font-weight: bold;
+}
+.elementor-control-pre_mapped_name .elementor-control-content
+{
+pointer-events: none;
+}
+.elementor-control-pre_mapped_email .elementor-control-content
+{
+pointer-events: none;
+}
+.checkbox_values
+{
+overflow: auto !important;
+height: 300px !important;
+}
+.elementor-repeater-fields .elementor-repeater-row-controls.editable {
+	float: left;
+	width: 100%;
+	max-height: 200px;
+	overflow: auto;
+}
+.lead_calss
+{
+  margin: 0px 0px 12px 0px;
+}
+.elementorlabeledit
+{
+font-size: 16px !important;
+font-weight: 500 !important;
+margin: 0px 0px 12px 0px;
+}

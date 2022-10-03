@@ -164,10 +164,7 @@ protected function _register_controls()
 	$this->end_controls_section();
   
 } 
-    
-   
-
-    /**
+ /**
      * Render oEmbed widget output on the frontend.
       *
      * Written in PHP and used to generate the final HTML.
@@ -195,14 +192,24 @@ protected function render()
         
     if($this->get_settings('CTA') != '')
     {    
-    $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
-  
-    $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
+
+        if(GENOO_SETUP)
+        {
+          $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
+        }
+        else
+        {
+           $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
+        }
+       $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
+
 	?>
-	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
+<div class="elementor-shortcode">
+    <?php echo $shortcode; ?>
+</div>
 <?php
 }
+}
+}
 
-}
-}
  
