@@ -96,12 +96,13 @@ class Survey_Widget extends \Elementor\Widget_Base
         else
         {
             $survey[$value['value']]=$value['text']; 
-
         }
+    } 
+      
+    return $survey;
+        
+}
 
-        return $survey;
-
-    }
     /**
      * Register survey widget controls.
      *
