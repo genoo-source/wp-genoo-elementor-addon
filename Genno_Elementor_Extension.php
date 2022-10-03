@@ -195,7 +195,7 @@ add_filter(
     'elementor_pro/forms/render/item/checkbox',
         function ($item, $index, $form) {
         global $wpdb, $post;
-      if ($item['third_party_input'] == 'leadtypes') {
+        if ($item['third_party_input'] == 'leadtypes') {
 
             $values = array();
 
@@ -476,7 +476,7 @@ function myplugin_ajaxurls()
 {
     echo '<script type="text/javascript">
         var ajaxurl = "' .
-        admin_url('admin-ajax.php').
+        admin_url('admin-ajax.php') .
         '";
     </script>';
 }
@@ -1114,7 +1114,9 @@ final class Genoo_Elementor_Extension
             }
         endif;
         wp_send_json($leadtypes_based_folder_id);
-    }    public function select_lead_types_options()    {
+    }
+    public function select_lead_types_options()
+    {
         global $WPME_API;
 
         $select_lead_folder_id = $_REQUEST['select_lead_folder_id'];
@@ -1185,9 +1187,18 @@ final class Genoo_Elementor_Extension
 
         wp_send_json($leadTypesvalueset);
 
-    
-}    public function leadtype_delete_option()    {
-        global $wpdb;        $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';        $get_delete_lead_type_id = $_REQUEST['delete_lead_type_id'];        $post_id = $_REQUEST['post_id'];        $item_id = $_REQUEST['item_id'];        $get_delete_lead_type_ids = explode("-", $get_delete_lead_type_id);        $folder_id = $get_delete_lead_type_ids[0];        $lead_value = $get_delete_lead_type_ids[1];
+
+    }
+    public function leadtype_delete_option()
+    {
+        global $wpdb;
+        $leadtype_form_save = $wpdb->prefix . 'leadtype_form_save_elementor';
+        $get_delete_lead_type_id = $_REQUEST['delete_lead_type_id'];
+        $post_id = $_REQUEST['post_id'];
+        $item_id = $_REQUEST['item_id'];
+        $get_delete_lead_type_ids = explode("-", $get_delete_lead_type_id);
+        $folder_id = $get_delete_lead_type_ids[0];
+        $lead_value = $get_delete_lead_type_ids[1];
 
         $wpdb->delete($leadtype_form_save, ['post_id' => $post_id, 'item_id' => $item_id, 'lead_values' => $lead_value, 'folder_id' => $folder_id]);
     }
