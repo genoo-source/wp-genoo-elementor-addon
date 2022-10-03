@@ -194,7 +194,7 @@ protected function render()
     {    
         if(GENOO_SETUP)
         {
-            $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]'; '';
+            $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
         }
         else{
            $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
