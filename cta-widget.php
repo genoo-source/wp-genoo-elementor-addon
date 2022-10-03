@@ -196,14 +196,13 @@ protected function render()
         {
           $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
         }
-        else{
+        else
+        {
            $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
         }
        $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
 	?>
 	<div class="elementor-shortcode"><?php echo $shortcode; ?></div>
 <?php
-}
-}
-}
+}}}
  
