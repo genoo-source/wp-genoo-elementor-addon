@@ -192,6 +192,7 @@ protected function render()
         
     if($this->get_settings('CTA') != '')
     {    
+
         if(GENOO_SETUP)
         {
           $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
@@ -201,6 +202,7 @@ protected function render()
            $shortcodes = '[WPMKTENGINECTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
         }
        $shortcode = do_shortcode( shortcode_unautop( $shortcodes ) );
+
 	?>
 <div class="elementor-shortcode">
     <?php echo $shortcode; ?>

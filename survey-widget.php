@@ -88,6 +88,15 @@ class Survey_Widget extends \Elementor\Widget_Base
             else {
                 $survey[$value['value']] = $value['text'];
             }
+
+        if($value['value']=='')
+        {
+            $survey[0] = 'Select a Survey';  
+        }
+        else
+        {
+            $survey[$value['value']]=$value['text']; 
+
         }
 
         return $survey;
@@ -157,4 +166,5 @@ class Survey_Widget extends \Elementor\Widget_Base
 <?php
         }
     }
+
 }
