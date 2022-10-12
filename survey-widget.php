@@ -153,7 +153,7 @@ class Survey_Widget extends \Elementor\Widget_Base
     {
         $survey_list = $this->get_settings('survey_list');
         if ($this->get_settings('survey_list') != '') {
-            if (GENOO_SETUP) {
+            if ($isGenoo==true) {
 	    $shortcodes = '[genooSurvey id="' . $survey_list . '"]';
 	     }
             else {
