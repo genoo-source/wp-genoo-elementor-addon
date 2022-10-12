@@ -10,6 +10,8 @@ use WPME\CacheFactory;
 use WPME\RepositoryFactory;
 use WPME\Extensions\RepositorySurveys;
 
+
+
 class Survey_Widget extends \Elementor\Widget_Base
 {
     /**
@@ -89,19 +91,17 @@ class Survey_Widget extends \Elementor\Widget_Base
                 $survey[$value['value']] = $value['text'];
             }
 
-        if($value['value']=='')
-        {
-            $survey[0] = 'Select a Survey';  
+            if ($value['value'] == '') {
+                $survey[0] = 'Select a Survey';
+            }
+            else {
+                $survey[$value['value']] = $value['text'];
+            }
         }
-        else
-        {
-            $survey[$value['value']]=$value['text']; 
-        }
-    } 
-      
-    return $survey;
-        
-}
+
+        return $survey;
+
+    }
 
     /**
      * Register survey widget controls.
@@ -153,9 +153,11 @@ class Survey_Widget extends \Elementor\Widget_Base
     {
         $survey_list = $this->get_settings('survey_list');
         if ($this->get_settings('survey_list') != '') {
-            if ($isGenoo==true) {
-	    $shortcodes = '[genooSurvey id="' . $survey_list . '"]';
-	     }
+             if(class_exists('\Genoo\Api') &&
+    class_exists('\Genoo\RepositorySettings'))
+           {
+           $shortcodes = '[genooSurvey id="' . $survey_list . '"]';
+            }
             else {
                 $shortcodes = '[WPMKTENGINESurvey id="' . $survey_list . '"]';
             }
