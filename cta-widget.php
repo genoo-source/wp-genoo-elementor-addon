@@ -193,7 +193,8 @@ protected function render()
     if($this->get_settings('CTA') != '')
     {    
 
-        if(GENOO_SETUP)
+        if(class_exists('\Genoo\Api') &&
+    class_exists('\Genoo\RepositorySettings'))
         {
           $shortcodes = '[genooCTA id="'.$cta_list.'" align="'.$align.'" hastime="'.$hastime.'" time="'.$ctaappearanceinterval.'"]';
         }

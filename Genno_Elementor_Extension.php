@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Genoo Elementor Extension
  * Description: This plugin requires the WPMKtgEngine or Genoo plugin installed before order to activate.
- * Version:     1.4.6
+ * Version:     1.4.7
  * Author:      Genoo
  * Text Domain: genoo-elementor-extension
  */
@@ -897,6 +897,9 @@ final class Genoo_Elementor_Extension
         [],
             $rannum
         );
+         wp_enqueue_style('my_font_style',plugin_dir_url(__FILE__) . 'fonts/fontawesome.min.css',
+        [],
+            $rannum);
     }
 
     /**

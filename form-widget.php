@@ -219,7 +219,8 @@ protected function render()
        
    if($this->get_settings('form_list') != '')
     {    
-        if(GENOO_SETUP)
+        if(class_exists('\Genoo\Api') &&
+    class_exists('\Genoo\RepositorySettings'))
         {
             $shortcodes = '[genooForm id="'.$form_list.'" theme="'.$theme.'" confirmation="'.$confirmation.'" msgSuccess="'.$success_message.'" msgFail="'.$error_message.'"]';
         }
