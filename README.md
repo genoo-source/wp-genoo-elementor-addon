@@ -10,7 +10,7 @@ License: GPLv2 or later
 
 License URI: http://www.gnu.org/licenses/gpl-2.0.html 
 
-Stable tag: 1.4.5
+Stable tag: 1.4.8
 
 
 Combine the power of Elementor plugin builder with the power of Genoo's marketing engine!
@@ -39,6 +39,18 @@ Integrates Genoo/WPMktgEngine with Elementor Forms, so can push directly into th
 == Upgrade Notice ==
 
 == Changelog ==
+
+= 1.4.8 =
+
+* Fixed the issue of form render function with the Genoo/Wpmktgengine plugin integration.
+
+= 1.4.7 =
+
+* Fixed the issue elementor page not loading if wpmktgengine/genoo api server stops.
+
+= 1.4.6 =
+
+* Fixed warning issues.
 
 = 1.4.5 =
 
